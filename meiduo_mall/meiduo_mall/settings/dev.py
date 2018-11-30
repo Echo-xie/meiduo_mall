@@ -32,6 +32,8 @@ DEBUG = True
 # 允许访问路径 -- 调试模式关闭后
 ALLOWED_HOSTS = [
     "127.0.0.1",
+    "localhost",
+    "api.lnsist.top",
 ]
 
 # Application definition
@@ -48,7 +50,6 @@ INSTALLED_APPS = [
     "rest_framework",  # DRF
     "corsheaders",  # 跨域请求
     # 自定义子应用
-    "test_demo.apps.TestDemoConfig",
     "users.apps.UsersConfig",
 ]
 
@@ -70,9 +71,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 跨域请求
     'corsheaders.middleware.CorsMiddleware',
-    # 自定义中间件
-    "test_demo.middleware.my_middleware",
-    "test_demo.middleware.my_middleware2",
 ]
 
 # 根路由路径
@@ -111,14 +109,22 @@ WSGI_APPLICATION = 'meiduo_mall.wsgi.application'
 # 数据库配置
 DATABASES = {
     'default': {
+        # 数据库引擎
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',  # 数据库主机
-        'PORT': 3306,  # 数据库端口
-        'USER': 'meiduo_test',  # 数据库用户名
-        'PASSWORD': '123456',  # 数据库用户密码
-        'NAME': 'meiduo_mall',  # 数据库名字
-        'TEST_CHARSET': "utf8",  # 指定测试数据库的字符集
-        'TEST_COLLATION': "utf8_general_ci",  # 排序规则
+        # 数据库主机ip
+        'HOST': '127.0.0.1',
+        # 数据库端口
+        'PORT': 3306,
+        # 数据库用户名
+        'USER': 'meiduo_test',
+        # 数据库用户密码
+        'PASSWORD': '123456',
+        # 数据库名字
+        'NAME': 'meiduo_mall',
+        # 指定测试数据库的字符集
+        'TEST_CHARSET': "utf8",
+        # 排序规则
+        'TEST_COLLATION': "utf8_general_ci",
     }
 }
 
@@ -170,7 +176,7 @@ STATIC_URL = '/static/'
 # 存放查找静态文件的目录 -- 仅在调试模式下（DEBUG=True）能对外提供静态文件。
 STATICFILES_DIRS = [
     # 根据当前目录路径拼接地址
-    os.path.join(BASE_DIR, '/static_files/'),
+    os.path.join(BASE_DIR, 'static_files'),
 ]
 # 上传文件保存路径
 MEDIA_ROOT = os.path.join(BASE_DIR, "static_files/media")
@@ -212,10 +218,14 @@ LOGGING = {
     'disable_existing_loggers': False,
     # 日志信息显示的格式
     'formatters': {
+        # 详情
         'verbose': {
+            # 格式 "日志等级 时间 类型 行号 信息"
             'format': '%(levelname)s %(asctime)s %(module)s %(lineno)d %(message)s'
         },
+        # 简单
         'simple': {
+            # 格式 "日至登记 类型 行号 信息"
             'format': '%(levelname)s %(module)s %(lineno)d %(message)s'
         },
     },
@@ -229,21 +239,28 @@ LOGGING = {
     'handlers': {
         # 向终端中输出日志
         'console': {
+            # 日志等级
             'level': 'INFO',
+            # 参数 -- 只在debug模式下生效
             'filters': ['require_debug_true'],
+            # 处理类
             'class': 'logging.StreamHandler',
+            # 输出格式
             'formatter': 'simple'
         },
         # 向文件中输出日志
         'file': {
+            # 日志等级
             'level': 'INFO',
+            # 处理类
             'class': 'logging.handlers.RotatingFileHandler',
             # 日志文件的位置
             'filename': os.path.join(os.path.dirname(BASE_DIR), "logs/meiduo.log"),
             # 日志文件的最大容量
             'maxBytes': 300 * 1024 * 1024,
-            # 300M * 10
+            # 日志文件数量  300M * 10
             'backupCount': 10,
+            # 输出格式
             'formatter': 'verbose'
         },
     },
@@ -261,6 +278,7 @@ LOGGING = {
 # 建议：项目开发完成再添加进来
 # DRF相关配置
 REST_FRAMEWORK = {
+    # 开启自定义捕获未处理异常
     # 'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.custom_exception_handler',
 }
 # 指定可以跨域访问当前服务器(127.0.0.1:8000)的白名单
@@ -268,7 +286,7 @@ CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:8080',
     'localhost:8080',
     'www.meiduo.site:8080',
-    'api.meiduo.site:8080'
+    'api.meiduo.site:8000'
 )
 # 指定在跨域访问中，后台是否支持cookie操作
 CORS_ALLOW_CREDENTIALS = True
