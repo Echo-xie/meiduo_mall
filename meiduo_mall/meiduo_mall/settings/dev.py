@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "corsheaders",  # 跨域请求
     # 自定义子应用
     "users.apps.UsersConfig",
+    "verifications.apps.VerificationsConfig",
 ]
 
 # 中间层列表
@@ -194,12 +195,21 @@ CACHES = {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
+    # 保存session
     "session": {
         # 数据库终端
         "BACKEND": "django_redis.cache.RedisCache",
         # 数据库地址 -- 密码
         "LOCATION": "redis://:123456@127.0.0.1:6379/14",
         # 选项],
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    # 保存短信验证码
+    "sms_codes": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:123456@127.0.0.1:6379/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -285,8 +295,8 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:8080',
     'localhost:8080',
-    'www.meiduo.site:8080',
-    'api.meiduo.site:8000'
+    'www.lnsist.top:8080',
+    'api.lnsist.top:8000'
 )
 # 指定在跨域访问中，后台是否支持cookie操作
 CORS_ALLOW_CREDENTIALS = True

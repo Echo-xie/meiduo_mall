@@ -17,6 +17,10 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
+    # admin站点
     url(r'^admin/', admin.site.urls),
+    # 用户子应用
     url(r'^users/', include("users.urls")),
+    # 校验子应用
+    url(r"^vm/", include("verifications.urls"))
 ]

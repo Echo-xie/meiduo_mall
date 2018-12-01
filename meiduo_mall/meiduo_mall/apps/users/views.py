@@ -1,4 +1,4 @@
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,7 +13,7 @@ def index(request):
     return HttpResponse("Hello World!!!")
 
 
-def test(request):
+def templates_test(request):
     """模板测试
 
     :param request:
