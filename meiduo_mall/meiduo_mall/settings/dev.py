@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/2.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
-
+import datetime
 import os
 import sys
 
@@ -290,7 +290,27 @@ LOGGING = {
 REST_FRAMEWORK = {
     # 开启自定义捕获未处理异常
     # 'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.custom_exception_handler',
+    # 配置默认验证方式
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # jwt认证
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        # 管理后台使用
+        'rest_framework.authentication.SessionAuthentication',
+        # 基本认证
+        'rest_framework.authentication.BasicAuthentication',
+    ),
 }
+# jwt认证配置
+JWT_AUTH = {  # 导包： import datetime
+    # jwt有效时间
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    # 修改登录成功接口返回的响应参数, 新增 user_id 和 username两个字段
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'verifications.utils.jwt_response_payload_handler',
+}
+# 扩展登录接口: 使用自定义的认证后台, 使之支持可以使用用户名或手机号登录
+AUTHENTICATION_BACKENDS = [
+    'verifications.utils.UsernameMobileAuthBackend',
+]
 # 指定可以跨域访问当前服务器(127.0.0.1:8000)的白名单
 CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:8080',

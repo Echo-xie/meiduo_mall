@@ -15,7 +15,7 @@ class VmTestCase(TestCase):
         # 测试浏览器
         test_client = Client()
         # 请求路径
-        path = "/vm/mobile/13000000000/count/"
+        path = "/vm/sms_code/13000000000/"
         # 请求体
         data = {}
         # 浏览器get请求, 获取响应
@@ -23,7 +23,8 @@ class VmTestCase(TestCase):
         #
         print(resp.data)
         # 断言结果
-        self.assertTrue(resp.status_code == 200)
+        # self.assertTrue(resp.status_code == 200)
+        # self.assertEqual(resp.status_code, 200)
 
     def test_username_repeat(self):
         """用户名重复"""
@@ -40,7 +41,8 @@ class VmTestCase(TestCase):
         #
         print(resp.data)
         # 断言结果
-        self.assertTrue(resp.status_code == 200)
+        # self.assertTrue(resp.status_code == 200)
+        self.assertEqual(resp.status_code, 200)
 
     def test_user_mobile_repeat(self):
         """用户手机重复"""
@@ -57,7 +59,8 @@ class VmTestCase(TestCase):
         #
         print(resp.data)
         # 断言结果
-        self.assertTrue(resp.status_code == 200)
+        # self.assertTrue(resp.status_code == 200)
+        self.assertEqual(resp.status_code, 200)
 
     def test_user_register(self):
         """用户注册"""
@@ -82,7 +85,7 @@ class VmTestCase(TestCase):
             "username": "test_1",
             "password": "123123123",
             "password2": "123123123",
-            "mobile": 13300000001,
+            "mobile": mobile,
             "sms_code": sms_code,
             "allow": True,
         }
@@ -91,4 +94,5 @@ class VmTestCase(TestCase):
         #
         print(resp.data)
         # 断言结果
-        self.assertTrue(resp.status_code == 201)
+        # self.assertTrue(resp.status_code == 201)
+        self.assertEqual(resp.status_code, 201)

@@ -3,6 +3,8 @@
 date: 18-12-1 下午9:43
 """
 from django.conf.urls import url
+from rest_framework_jwt.views import obtain_jwt_token
+
 from . import views
 
 urlpatterns = [
@@ -14,5 +16,7 @@ urlpatterns = [
     url(r'^mobile/(?P<mobile>1[3-9]\d{9})/count/$', views.CheckUsersAttr.as_view({'get': 'check_mobile'})),
     # 用户注册
     url(r'^user_register/$', views.UserRegister.as_view()),
+    # 用户登陆 -- 调用JWT的验证登陆
+    url(r"authorizations/$", obtain_jwt_token)
 
 ]

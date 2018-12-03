@@ -183,7 +183,17 @@ var vm = new Vue({
                 };
                 axios.post(this.host + '/vm/user_register/', data)
                     .then(response => {
-                        location.href = '/index.html';      // 跳转到首页
+                        // 清除之前保存的数据
+                        // 清理session级别存储
+                        sessionStorage.clear();
+                        // 清理本地级别存储
+                        localStorage.clear();
+                        // 保存用户的登录状态数据 -- 本地级别存储
+                        localStorage.token = response.data.token;
+                        localStorage.username = response.data.username;
+                        localStorage.user_id = response.data.id;
+                        // 跳转到首页
+                        location.href = '/index.html';
                     })
                     .catch(error => {
                         if (error.response.status === 400) {

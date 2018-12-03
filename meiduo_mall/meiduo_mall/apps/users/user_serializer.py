@@ -4,7 +4,8 @@ date: 18-12-1 下午10:49
 """
 from rest_framework.serializers import ModelSerializer
 import re
-from django_redis import get_redis_connection
+
+from rest_framework_jwt.settings import api_settings
 
 from meiduo_mall.utils.common import get_sms_code_by_mobile
 from users.models import User
@@ -28,15 +29,19 @@ class UserRegisterSerializer(ModelSerializer):
     """用户注册序列化器
 
     """
+    # write_only: 只写[写入], 只用于反序列化, 不进行序列化
     password2 = serializers.CharField(label='确认密码', write_only=True)
     sms_code = serializers.CharField(label='短信验证码', write_only=True)
     allow = serializers.BooleanField(label='同意协议', write_only=True)
+    # 添加 token字段, 令牌用于jwt认证, read_only: 只读[读取], 只用于序列化, 不进行反序列化
+    token = serializers.CharField(label='登录状态token', read_only=True)
 
     class Meta:
         # 指定实体类
         model = User
         # 字段展示
-        fields = ('id', 'username', 'password', 'password2', 'sms_code', 'mobile', 'allow')
+        fields = ('id', 'username', 'password', 'password2', 'sms_code', 'mobile', 'allow', "token")
+
         # 修改字段规则
         extra_kwargs = {
             # 用户名
@@ -120,4 +125,18 @@ class UserRegisterSerializer(ModelSerializer):
             username=validated_data.get('username'),
             password=validated_data.get('password'),
             mobile=validated_data.get('mobile'))
+        # 注册成功添加数据后, 生成JWT返回客户端自动登陆
+        # 导包： from rest_framework_jwt.settings import api_settings
+        # 生成消息体(函数)
+        jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
+        # 生成JWT认证(函数)
+        jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
+
+        # {'user_id': x, 'email': '', 'username': '136xxxxxxxx', 'exp': 1539048426}
+        # 根据用户信息生成消息体
+        payload = jwt_payload_handler(user)
+        # 根据消息体生成JWT认证
+        token = jwt_encode_handler(payload)
+        # 生成的jwt 序列化返回
+        user.token = token
         return user
