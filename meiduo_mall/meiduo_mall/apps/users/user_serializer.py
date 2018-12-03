@@ -5,6 +5,8 @@ date: 18-12-1 下午10:49
 from rest_framework.serializers import ModelSerializer
 import re
 from django_redis import get_redis_connection
+
+from meiduo_mall.utils.common import get_sms_code_by_mobile
 from users.models import User
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -29,13 +31,6 @@ class UserRegisterSerializer(ModelSerializer):
     password2 = serializers.CharField(label='确认密码', write_only=True)
     sms_code = serializers.CharField(label='短信验证码', write_only=True)
     allow = serializers.BooleanField(label='同意协议', write_only=True)
-
-    def create(self, validated_data):
-        # User.objects.create()             # 不会对密码进行加密
-        return User.objects.create_user(  # 会对密码进行加密
-            username=validated_data.get('username'),
-            password=validated_data.get('password'),
-            mobile=validated_data.get('mobile'))
 
     class Meta:
         # 指定实体类
@@ -73,51 +68,56 @@ class UserRegisterSerializer(ModelSerializer):
 
     """自定义校验规则"""
 
-    def validate_mobile(self, value):
-        """验证手机号
-
-        :param value: 手机号码
-        :return: 手机号码
-        """
-        # 如果手机号码不匹配
-        if not re.match(r'^1[3-9]\d{9}$', value):
-            # 抛出异常
-            raise ValidationError('手机号格式错误')
-        # 返回手机号码
-        return value
-
-    def validate_allow(self, value):
-        """检验用户是否同意协议
-
-        :param value: 是否同意协议
-        :return: 是否同意协议
-        """
-        # 如果没有同意协议
-        if not value:
-            # 抛出异常
-            raise ValidationError('请同意用户协议')
-        # 返回是否同意协议
-        return value
-
     def validate(self, attrs):
+        # 获取请求体数据
+        # 密码
+        _password = attrs['password']
+        # 确认密码
+        _password2 = attrs['password2']
+        # 手机号码
+        _mobile = attrs['mobile']
+        # 短信验证码
+        _sms_code = attrs['sms_code']
+        # 同意协议
+        _allow = attrs["allow"]
+
         # 如果两次密码不一致
-        if attrs['password'] != attrs['password2']:
+        if _password != _password2:
             # 抛出异常
             raise ValidationError('两次密码不一致')
-
-        # 访问配置信息, 获取数据库连接
-        redis_conn = get_redis_connection('sms_codes')
-        # 获取表单数据 -- 手机号码
-        mobile = attrs['mobile']
-        # 获取此手机号码在数据库中的数据
-        real_sms_code = redis_conn.get('sms_%s' % mobile)
+        # 如果手机号码不匹配
+        if not re.match(r'^1[3-9]\d{9}$', _mobile):
+            # 抛出异常
+            raise ValidationError('手机号格式错误')
+        # 调用通用工具获取手机短信验证码
+        real_sms_code = get_sms_code_by_mobile(mobile=_mobile)
         # 如果数据库没有此手机号码数据
         if real_sms_code is None:
             # 抛出异常
             raise ValidationError('无效的短信验证码')
         # 如果用户输入短信验证码和数据库的数据不一致
-        if attrs['sms_code'] != real_sms_code.decode():
+        if _sms_code != real_sms_code:
             # 抛出异常
             raise ValidationError('短信验证码错误')
+
+        # 如果没有同意协议
+        if not _allow:
+            # 抛出异常
+            raise ValidationError('请同意用户协议')
         # 返回表单数据
         return attrs
+
+    def create(self, validated_data):
+        """重写创建函数 -- 指定保存字段
+
+        :param validated_data: 验证后数据
+        :return:
+        """
+        # 不会对密码进行加密
+        # User.objects.create()
+        # 会对密码进行加密 -- 自定义保存属性
+        user = User.objects.create_user(
+            username=validated_data.get('username'),
+            password=validated_data.get('password'),
+            mobile=validated_data.get('mobile'))
+        return user

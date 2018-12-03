@@ -117,11 +117,11 @@ DATABASES = {
         # 数据库端口
         'PORT': 3306,
         # 数据库用户名
-        'USER': 'meiduo_test',
+        'USER': 'root',
         # 数据库用户密码
         'PASSWORD': '123456',
         # 数据库名字
-        'NAME': 'meiduo_mall',
+        'NAME': 'db_meiduo_mall',
         # 指定测试数据库的字符集
         'TEST_CHARSET': "utf8",
         # 排序规则

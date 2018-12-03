@@ -54,18 +54,20 @@ var vm = new Vue({
                 })
         },
         check_pwd: function () {
+            this.error_password = false;
             let len = this.password.length;
             if (len < 8 || len > 20) {
                 this.error_password = true;
-            } else {
-                this.error_password = false;
+                // 函数返回
+                return
             }
         },
         check_cpwd: function () {
+            this.error_check_password = false;
             if (this.password !== this.password2) {
                 this.error_check_password = true;
-            } else {
-                this.error_check_password = false;
+                // 函数返回
+                return
             }
         },
         check_phone: function () {
@@ -74,6 +76,8 @@ var vm = new Vue({
             if (!re.test(this.mobile)) {
                 this.error_phone_message = '请输入正确的手机号码';
                 this.error_phone = true;
+                // 函数返回
+                return
             }
             // 访问后台判断手机号码是否重复
             // 拼接url请求路径
@@ -91,17 +95,19 @@ var vm = new Vue({
                 })
         },
         check_sms_code: function () {
+            this.error_sms_code = false;
             if (!this.sms_code) {
                 this.error_sms_code = true;
-            } else {
-                this.error_sms_code = false;
+                // 函数返回
+                return
             }
         },
         check_allow: function () {
+            this.error_allow = false;
             if (!this.allow) {
                 this.error_allow = true;
-            } else {
-                this.error_allow = false;
+                // 函数返回
+                return
             }
         },
 
