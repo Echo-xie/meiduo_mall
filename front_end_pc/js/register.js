@@ -40,7 +40,7 @@ var vm = new Vue({
             }
             // 访问后台判断用户名是否重复
             // 拼接url请求路径
-            let url = this.host + "/vm/username/" + this.username + "/count/"
+            let url = this.host + "vm/username/" + this.username + "/count/"
             // ajax请求
             axios.get(url, {responseType: 'json'})
                 .then(response => {
@@ -81,7 +81,7 @@ var vm = new Vue({
             }
             // 访问后台判断手机号码是否重复
             // 拼接url请求路径
-            let url = this.host + "/vm/mobile/" + this.mobile + "/count/"
+            let url = this.host + "vm/mobile/" + this.mobile + "/count/"
             // ajax请求
             axios.get(url, {responseType: 'json'})
                 .then(response => {
@@ -131,7 +131,7 @@ var vm = new Vue({
             this.sending_flag = true;  // 表示正在等待服务器下发短信
 
             // 拼接url请求路径
-            let url = this.host + "/vm/sms_code/" + this.mobile + "/";
+            let url = this.host + "vm/sms_code/" + this.mobile + "/";
             // ajax请求
             axios.get(url)
                 .then(response => {
@@ -181,7 +181,7 @@ var vm = new Vue({
                     sms_code: this.sms_code,
                     allow: this.allow
                 };
-                axios.post(this.host + '/vm/user_register/', data)
+                axios.post(this.host + 'vm/user_register/', data)
                     .then(response => {
                         // 清除之前保存的数据
                         // 清理session级别存储

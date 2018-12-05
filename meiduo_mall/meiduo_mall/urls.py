@@ -22,5 +22,7 @@ urlpatterns = [
     # 用户子应用
     url(r'^users/', include("users.urls")),
     # 校验子应用
-    url(r"^vm/", include("verifications.urls"))
+    url(r"^vm/", include("verifications.urls")),
+    # 第三方开放平台
+    url(r"^oauth/", include("oauth.urls")),
 ]

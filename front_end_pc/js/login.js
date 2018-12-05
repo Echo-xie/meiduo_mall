@@ -1,6 +1,7 @@
 var vm = new Vue({
+    // 标签ID
     el: '#app',
-
+    // 属性
     data: {
         host: host,
         error_username: false,
@@ -10,7 +11,20 @@ var vm = new Vue({
         password: '',
         remember: false
     },
-
+    // 页面挂载时调用
+    mounted: function () {
+        // jwt令牌
+        token_ = localStorage.token;
+        // 用户ID
+        user_id_ = localStorage.user_id;
+        // 用户名
+        username_ = localStorage.username;
+        if (token_ && user_id_ && username_) {
+            this.remember = true
+        }
+    }
+    ,
+    // 函数
     methods: {
         // 获取url查询字符串参数值
         get_query_string: function (name) {
@@ -50,7 +64,7 @@ var vm = new Vue({
             // 如果验证通过
             if (this.error_username == false && this.error_pwd == false) {
                 // ajax post请求 -- 用户登陆
-                axios.post(this.host + '/vm/authorizations/', {
+                axios.post(this.host + 'vm/authorizations/', {
                     username: this.username,
                     password: this.password
                 })
@@ -96,7 +110,14 @@ var vm = new Vue({
 
         // qq登录
         qq_login: function () {
-
+            let next_ = this.get_query_string("next") || "/";
+            axios.get(this.host + "oauth/qq/authorization/?next=" + next_)
+                .then(resp => {
+                    location.href = resp.data.login_url;
+                })
+                .catch(error => {
+                    console.log(error.response.data);
+                })
         }
     }
 });

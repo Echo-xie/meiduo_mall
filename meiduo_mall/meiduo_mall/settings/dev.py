@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     # 自定义子应用
     "users.apps.UsersConfig",
     "verifications.apps.VerificationsConfig",
+    "oauth.apps.OauthConfig",
 ]
 
 # 中间层列表
@@ -316,9 +317,19 @@ CORS_ORIGIN_WHITELIST = (
     '127.0.0.1:8080',
     'localhost:8080',
     'www.lnsist.top:8080',
-    'api.lnsist.top:8000'
+    'api.lnsist.top:8000',
+    'www.meiduo.site:8080',
+    'api.meiduo.site:8000',
 )
 # 指定在跨域访问中，后台是否支持cookie操作
 CORS_ALLOW_CREDENTIALS = True
 # 在项目配置文件中，指定使用自定义的用户模型类
 AUTH_USER_MODEL = 'users.User'
+# QQ开放平台配置
+# APP ID
+QQ_CLIENT_ID = '101474184'
+# APP Key
+QQ_CLIENT_SECRET = 'c6ce949e04e12ecc909ae6a8b09b637c'
+# 登录成功的回调地址
+# QQ_REDIRECT_URI = 'http://www.lnsist.top:8080/oauth_callback.html'
+QQ_REDIRECT_URI = 'http://www.meiduo.site:8080/oauth_callback.html'

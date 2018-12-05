@@ -21,7 +21,34 @@ var vm = new Vue({
 
     mounted: function () {
         // 从路径中获取qq重定向返回的code
+        let code = this.get_query_string('code');
+        axios.get(this.host + 'oauth/qq/user/?code=' + code)
+            .then(response => {
+                // 如果有token, 表示用户已绑定, 并登录成功
+                if (response.data.token) {
+                    // 保存登录成功的jwt
+                    sessionStorage.clear();
+                    localStorage.clear();
+                    // session级别存储
+                    sessionStorage.user_id = response.data.user_id;
+                    sessionStorage.username = response.data.username;
+                    sessionStorage.token = response.data.token;
 
+                    // 获取state跳转页面
+                    var state = this.get_query_string('state');
+                    // 跳转
+                    location.href = state
+                    // location.href = decodeURIComponent(state);  // url解码
+                } else { // 用户未绑定
+                    // 获取openid
+                    this.openid = response.data.openid;
+                    // 显示绑定界面
+                    this.is_show_waiting = false;
+                }
+            })
+            .catch(error => {
+                alert(error.response.data.message);
+            })
     },
 
     methods: {
@@ -68,7 +95,7 @@ var vm = new Vue({
             // 重新发送短信后，隐藏提示信息
             this.error_sms_code = false;
 
-            if (this.sending_flag == true) {
+            if (this.sending_flag) {
                 return;
             }
             this.sending_flag = true;
@@ -76,13 +103,13 @@ var vm = new Vue({
             // 校验参数，保证输入框有数据填写
             this.check_phone();
 
-            if (this.error_phone == true) {
+            if (this.error_phone) {
                 this.sending_flag = false;
                 return;
             }
 
             // 向后端接口发送请求，让后端发送短信验证码
-            axios.get(this.host + '/sms_codes/' + this.mobile + '/')
+            axios.get(this.host + 'vm/sms_code/' + this.mobile + '/')
                 .then(response => {
                     // 表示后端发送短信成功
                     // 倒计时60秒，60秒后允许用户再次点击发送短信验证码的按钮
@@ -118,9 +145,39 @@ var vm = new Vue({
 
         // 绑定open_id和美多用户
         on_submit: function () {
+            // 检测表单
             this.check_pwd();
             this.check_phone();
             this.check_sms_code();
+            // 检测通过
+            if (!this.error_password && !this.error_phone && !this.error_sms_code) {
+                // 发请求绑定openid和美多用户
+                axios.post(this.host + 'oauth/qq/user/', {
+                    password: this.password,
+                    mobile: this.mobile,
+                    sms_code: this.sms_code,
+                    openid: this.openid
+                })
+                    .then(response => {
+                        // 绑定成功，即登录成功，需要记录用户登录状态
+                        sessionStorage.clear();
+                        localStorage.clear();
+                        sessionStorage.token = response.data.token;
+                        sessionStorage.user_id = response.data.user_id;
+                        sessionStorage.username = response.data.username;
+
+                        // QQ登录成功，跳转到指定界面
+                        location.href = this.get_query_string('state');
+                    })
+                    .catch(error => {
+                        if (error.response.status == 400) {
+                            this.error_sms_code_message = error.response.data.message;
+                            this.error_sms_code = true;
+                        } else {
+                            console.log(error.response.data);
+                        }
+                    })
+            }
 
         }
     }

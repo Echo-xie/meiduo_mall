@@ -91,7 +91,7 @@ var vm = new Vue({
 
         // 请求查询结果
         get_search_result: function () {
-            axios.get(this.host + '/skus/search/', {
+            axios.get(this.host + 'skus/search/', {
                     params: {
                         text: this.query,
                         page: this.page,
