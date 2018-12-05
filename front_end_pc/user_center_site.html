@@ -11,9 +11,8 @@
     <script type="text/javascript" src="js/axios-0.18.0.min.js"></script>
 
     <script>
-        var user_id = sessionStorage.user_id || localStorage.user_id;
         var token = sessionStorage.token || localStorage.token;
-        if (!(user_id && token)) {
+        if (!token) {
             location.href = '/login.html?next=/user_center_site.html';
         }
     </script>
@@ -70,37 +69,36 @@
             </div>
 
 
-			<!-- 复制：循环显示用户的多个收件地址 -->
-			<div class="site_con" v-for="(address, index) in addresses">
-					<div class="site_title">
-						<div v-if="is_set_title[index]">
-							<input v-model="input_title" type="text" name="">
-							<input @click="save_title(index)" type="button" name="" value="保 存">
-							<input @click="cancel_title(index)" type="reset" name="" value="取 消">
-						</div>
-						<div v-else>
-							<h3>{{ address.title }}</h3>
-							<a @click="show_edit_title(index)"></a>
-						</div>
-						<em v-if="address.id==default_address_id">默认地址</em>
-						<span @click="del_address(index)">×</span>
-					</div>
-					<ul class="site_list">
-						<li><span>收货人：</span><b>{{ address.receiver }}</b></li>
-						<li><span>所在地区：</span><b>{{ address.province }} {{ address.city }}
-							{{ address.district }}</b></li>
-						<li><span>地址：</span><b>{{ address.place }}</b></li>
-						<li><span>手机：</span><b>{{ address.mobile }}</b></li>
-						<li><span>固定电话：</span><b>{{ address.tel }}</b></li>
-						<li><span>电子邮箱：</span><b>{{ address.email }}</b></li>
-					</ul>
-					<div class="down_btn">
-						<a v-if="address.id!=default_address_id" @click="set_default(index)">
-							设为默认</a>
-						<a @click="show_edit(index)">编辑</a>
-					</div>
-			</div>
-
+            <!-- 复制：循环显示用户的多个收件地址 -->
+            <div class="site_con" v-for="(address, index) in addresses">
+                <div class="site_title">
+                    <div v-if="is_set_title[index]">
+                        <input v-model="input_title" type="text" name="">
+                        <input @click="save_title(index)" type="button" name="" value="保 存">
+                        <input @click="cancel_title(index)" type="reset" name="" value="取 消">
+                    </div>
+                    <div v-else>
+                        <h3>{{ address.title }}</h3>
+                        <a @click="show_edit_title(index)"></a>
+                    </div>
+                    <em v-if="address.id==default_address_id">默认地址</em>
+                    <span @click="del_address(index)">×</span>
+                </div>
+                <ul class="site_list">
+                    <li><span>收货人：</span><b>{{ address.receiver }}</b></li>
+                    <li><span>所在地区：</span><b>{{ address.province }} {{ address.city }}
+                        {{ address.district }}</b></li>
+                    <li><span>地址：</span><b>{{ address.place }}</b></li>
+                    <li><span>手机：</span><b>{{ address.mobile }}</b></li>
+                    <li><span>固定电话：</span><b>{{ address.tel }}</b></li>
+                    <li><span>电子邮箱：</span><b>{{ address.email }}</b></li>
+                </ul>
+                <div class="down_btn">
+                    <a v-if="address.id!=default_address_id" @click="set_default(index)">
+                        设为默认</a>
+                    <a @click="show_edit(index)">编辑</a>
+                </div>
+            </div>
 
 
         </div>
@@ -135,25 +133,18 @@
                 <div class="form_group">
                     <label>*所在地区：</label>
 
-					<!-- 显示省市区数据 -->
-					<select>
-						<option value="0">北京</option>
-						<option value="1">上海</option>
-						<option value="2">广州</option>
-						<option value="3">深圳</option>
-					</select>
-					<select>
-						<option value="0">北京</option>
-						<option value="1">上海</option>
-						<option value="2">广州</option>
-						<option value="3">深圳</option>
-					</select>
-					<select>
-						<option value="0">北京</option>
-						<option value="1">上海</option>
-						<option value="2">广州</option>
-						<option value="3">深圳</option>
-					</select>
+                    <!-- 显示省市区数据 -->
+                    <select v-model="form_address.province_id">
+                        <option v-for="province in provinces" v-bind:value="province.id">{{ province.name }}</option>
+                    </select>
+
+                    <select v-model="form_address.city_id">
+                        <option v-for="city in cities" v-bind:value="city.id">{{ city.name }}</option>
+                    </select>
+
+                    <select v-model="form_address.district_id">
+                        <option v-for="district in districts" v-bind:value="district.id">{{ district.name }}</option>
+                    </select>
 
                 </div>
                 <div class="form_group">

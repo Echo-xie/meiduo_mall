@@ -17,7 +17,7 @@ var vm = new Vue({
 
     mounted: function () {
         // 1. 获取用户个人信息
-        axios.get(this.common.host + 'users/user_detail/', this.common.config)
+        axios.get(this.common.host + 'users/detail/', this.common.config)
             .then(response => {
                 // 显示用户数据
                 this.user_id = response.data.id;

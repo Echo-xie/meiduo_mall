@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "users.apps.UsersConfig",
     "verifications.apps.VerificationsConfig",
     "oauth.apps.OauthConfig",
+    "areas.apps.AreasConfig",
 ]
 
 # 中间层列表
@@ -300,6 +301,15 @@ REST_FRAMEWORK = {
         # 基本认证
         'rest_framework.authentication.BasicAuthentication',
     ),
+    # 分页
+    'DEFAULT_PAGINATION_CLASS': 'meiduo_mall.utils.pagination.MyPageNumberPagination',
+}
+# drf扩展: 缓存配置, 获取省份和区县接口使用到
+REST_FRAMEWORK_EXTENSIONS = {
+    # 缓存时间(1小时)
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 60,
+    # 缓存到哪里 (caches中配置的default)
+    'DEFAULT_USE_CACHE': 'default',
 }
 # jwt认证配置
 JWT_AUTH = {  # 导包： import datetime

@@ -7,7 +7,7 @@ import re
 from rest_framework_jwt.settings import api_settings
 from celery_tasks.email.tasks import send_verify_email
 from meiduo_mall.utils.common import get_sms_code_by_mobile
-from users.models import User
+from users.models import User, Address
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from users.utils import generate_verify_email_url
@@ -148,9 +148,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
-        """元数据
-
-        """
+        """元数据"""
         # 实体类
         model = User
         # 展示字段
@@ -163,9 +161,7 @@ class EmailSerializer(serializers.ModelSerializer):
     """
 
     class Meta:
-        """元数据
-
-        """
+        """元数据"""
         # 实体类
         model = User
         # 展示字段
@@ -197,3 +193,32 @@ class EmailSerializer(serializers.ModelSerializer):
         send_verify_email.delay(email, verify_url)
 
         return instance
+
+
+class UserAddressSerializer(serializers.ModelSerializer):
+    """
+    用户地址序列化器
+    """
+    province = serializers.StringRelatedField(read_only=True)
+    city = serializers.StringRelatedField(read_only=True)
+    district = serializers.StringRelatedField(read_only=True)
+    # 新增地址时补充的字段(可读可写)
+    province_id = serializers.IntegerField(label='省ID', required=True)
+    city_id = serializers.IntegerField(label='市ID', required=True)
+    district_id = serializers.IntegerField(label='区ID', required=True)
+
+    def validate_mobile(self, value):
+        if not re.match(r'^1[3-9]\d{9}$', value):
+            raise serializers.ValidationError('手机号格式错误')
+        return value
+
+    def create(self, validated_data):
+        """ 保存 """
+        # self.context['request'].user ：获取当前登录用户对象
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
+    class Meta:
+        model = Address
+        # 新增地址，不需要用户传递user到服务器，服务器可以自动获取到当前登录用户对象
+        exclude = ('user', 'is_deleted', 'create_time', 'update_time')

@@ -25,4 +25,6 @@ urlpatterns = [
     url(r"^vm/", include("verifications.urls")),
     # 第三方开放平台
     url(r"^oauth/", include("oauth.urls")),
+    # 省市区管理
+    url(r"^areas/", include("areas.urls")),
 ]
