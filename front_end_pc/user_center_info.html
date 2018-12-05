@@ -7,15 +7,14 @@
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
 
-    <script type="text/javascript" src="js/host.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
     <script type="text/javascript" src="js/vue-2.5.16.js"></script>
     <script type="text/javascript" src="js/axios-0.18.0.min.js"></script>
-    
-	<script>
+
+    <script>
         // 未登录不能访问个人信息界面
-        var user_id = sessionStorage.user_id || localStorage.user_id;
-        var token = sessionStorage.token || localStorage.token;
-        if (!(user_id && token)) {
+        let token = sessionStorage.token || localStorage.token;
+        if (!token) {
             // 未登录，跳转到登录界面
             location.href = '/login.html?next=/user_center_info.html';
         }

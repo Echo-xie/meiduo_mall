@@ -14,4 +14,4 @@ celery_app = Celery('meiduo')
 celery_app.config_from_object('celery_tasks.config')
 
 # 指定要扫描任务的包, 会自动读取包下的名字为 tasks.py 的文件
-celery_app.autodiscover_tasks(['celery_tasks.sms'])
+celery_app.autodiscover_tasks(['celery_tasks.sms', "celery_tasks.email"])

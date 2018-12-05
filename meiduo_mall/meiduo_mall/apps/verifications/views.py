@@ -1,16 +1,12 @@
-from time import sleep
-
-from django.shortcuts import render
-
-# Create your views here.
+from django.conf import settings
 from django_redis import get_redis_connection
+from itsdangerous import TimedJSONWebSignatureSerializer, BadData
 from redis import StrictRedis
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
-
 from meiduo_mall.utils.exceptions import logger
 from celery_tasks.sms.tasks import *
 from users.models import User
@@ -127,3 +123,43 @@ class UserRegister(CreateAPIView):
     """
     # 指定序列化器
     serializer_class = UserRegisterSerializer
+
+
+class VerifyEmailView(APIView):
+    """ 激活用户邮箱
+
+    """
+
+    def get(self, request):
+        # 获取token
+        token = request.query_params.get('token')
+        # 如果没有token
+        if not token:
+            return Response({'message': '缺少token'}, status=400)
+
+        # 验证token -- 10分钟
+        serializer = TimedJSONWebSignatureSerializer(settings.SECRET_KEY, expires_in=10 * 60)
+        try:
+            # 解密
+            data = serializer.loads(token)
+        except BadData:
+            # 解密异常 -- 抛出异常
+            return Response({'message': '链接信息无效'}, status=400)
+
+        # 获取解密后的邮箱
+        email = data.get('email')
+        # 获取解密后的用户ID
+        user_id = data.get('user_id')
+        try:
+            # 根据用户ID和邮箱获取用户信息
+            user = User.objects.get(id=user_id, email=email)
+        except User.DoesNotExist:
+            # 抛出异常
+            return Response({'message': '激活用户不存在'}, status=400)
+
+        # 修改用户邮箱激活状态
+        user.email_active = True
+        # 保存记录
+        user.save()
+
+        return Response({'message': 'OK'})

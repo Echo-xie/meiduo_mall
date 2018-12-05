@@ -10,6 +10,7 @@ from rest_framework_jwt.settings import api_settings
 
 from oauth.models import OAuthQQUser
 from oauth.qq_serializers import QQUserSerializer
+from oauth.utils import generate_encrypted_openid
 
 
 class QQURLView(APIView):
@@ -28,7 +29,7 @@ class QQURLView(APIView):
         # 如果没有跳转页
         if not next_:
             # 默认转转首页
-            next_ = '/'  # 首页
+            next_ = ''  # 首页
         # 实例化QQ第三方开放平台
         oauth = OAuthQQ(client_id=settings.QQ_CLIENT_ID,
                         client_secret=settings.QQ_CLIENT_SECRET,
@@ -70,6 +71,8 @@ class QQUserView(APIView):
             oauth_user = OAuthQQUser.objects.get(openid=openid)
         except OAuthQQUser.DoesNotExist:
             # 如果没有此openid信息, 表示需要此用户需要进行绑定账号, 返回openid进行下一步绑定用户
+            # 对openid进行加密, 防修改
+            openid = generate_encrypted_openid(openid)
             return Response({'openid': openid})
         else:
             # 获取到openid信息, 返回jwt自动登陆

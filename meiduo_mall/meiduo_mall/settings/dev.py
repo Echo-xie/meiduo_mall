@@ -333,3 +333,15 @@ QQ_CLIENT_SECRET = 'c6ce949e04e12ecc909ae6a8b09b637c'
 # 登录成功的回调地址
 # QQ_REDIRECT_URI = 'http://www.lnsist.top:8080/oauth_callback.html'
 QQ_REDIRECT_URI = 'http://www.meiduo.site:8080/oauth_callback.html'
+# 邮件后端
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# 指定邮箱服务器
+EMAIL_HOST = 'smtp.yeah.net'
+# 默认端口
+EMAIL_PORT = 25
+# 发送邮件的邮箱
+EMAIL_HOST_USER = 'lnsist@yeah.net'
+# 在邮箱中设置的客户端授权密码 （不是邮箱密码）
+EMAIL_HOST_PASSWORD = 'lnsist123'
+# 收件人看到的发件人
+EMAIL_FROM = 'lnsist<lnsist@yeah.net>'

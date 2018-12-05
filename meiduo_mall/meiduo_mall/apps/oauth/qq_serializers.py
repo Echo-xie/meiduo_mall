@@ -6,6 +6,7 @@ from django_redis import get_redis_connection
 from rest_framework import serializers
 
 from oauth.models import OAuthQQUser
+from oauth.utils import check_encrypted_openid
 from users.models import User
 
 
@@ -25,37 +26,45 @@ class QQUserSerializer(serializers.Serializer):
         :return:
         """
         # 手机
-        mobile = attrs['mobile']
+        mobile_ = attrs['mobile']
         # 短信验证码
-        sms_code = attrs['sms_code']
+        sms_code_ = attrs['sms_code']
         # 密码
-        password = attrs['password']
+        password_ = attrs['password']
+        # 获取openid, 校验openid是否有效
+        openid_ = attrs['openid']
+
+        # 解密
+        openid_ = check_encrypted_openid(openid_)
+        # 如果没有解密openid_
+        if not openid_:
+            raise serializers.ValidationError({'message': '无效的openid'})
 
         # 获取Redis数据库连接
         redis_conn = get_redis_connection('sms_codes')
         # 获取短信验证码数据
-        real_sms_code = redis_conn.get('sms_%s' % mobile)
+        real_sms_code = redis_conn.get('sms_%s' % mobile_)
         # 如果没有短信验证码数据
         if not real_sms_code:
             # 抛出异常
             raise serializers.ValidationError({'message': '短信验证码无效'})
         # 如果短信验证码和短信验证码数据不一致
-        if real_sms_code.decode() != sms_code:
+        if real_sms_code.decode() != sms_code_:
             # 抛出异常
             raise serializers.ValidationError({'message': '短信验证码错误'})
 
         try:
             # 根据手机号查询美多用户
-            user = User.objects.get(mobile=mobile)
+            user = User.objects.get(mobile=mobile_)
         except User.DoesNotExist:
             # 如果用户不存在, 则自动新增一个美多用户, 再进行绑定
             user = User.objects.create_user(
-                username=mobile,
-                password=password,
-                mobile=mobile)
+                username=mobile_,
+                password=password_,
+                mobile=mobile_)
         else:
             # 如果要绑定的用户存在, 则校验密码是否正确
-            if not user.check_password(password):
+            if not user.check_password(password_):
                 raise serializers.ValidationError({'message': '密码错误'})
 
         # 将认证后的user放进校验字典中，绑定关联时用到

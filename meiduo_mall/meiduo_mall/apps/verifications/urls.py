@@ -17,6 +17,8 @@ urlpatterns = [
     # 用户注册
     url(r'^user_register/$', views.UserRegister.as_view()),
     # 用户登陆 -- 调用JWT的验证登陆
-    url(r"authorizations/$", obtain_jwt_token)
+    url(r"^authorizations/$", obtain_jwt_token),
+    # 用户激活邮箱验证
+    url(r"^email/$", views.VerifyEmailView.as_view()),
 
 ]

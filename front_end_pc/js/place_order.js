@@ -1,7 +1,7 @@
 var vm = new Vue({
     el: '#app',
     data: {
-        host,
+        common,
         username: sessionStorage.username || localStorage.username,
         user_id,
         token,
@@ -18,12 +18,13 @@ var vm = new Vue({
 
     mounted: function () {
         // 获取地址信息
-        axios.get(this.host + 'addresses/', {
-                headers: {
-                    'Authorization': 'JWT ' + this.token
-                },
-                responseType: 'json'
-            })
+        axios.get(this.common.host + 'addresses/', {
+            headers: {
+                // 向后端传递JWT
+                'Authorization': 'JWT ' + sessionStorage.token || localStorage.token
+            },
+            responseType: 'json'
+        })
             .then(response => {
                 this.addresses = response.data.addresses;
                 this.nowsite = response.data.default_address_id;
@@ -38,12 +39,13 @@ var vm = new Vue({
             })
 
         // 获取结算商品信息
-        axios.get(this.host + 'orders/settlement/', {
-                headers: {
-                    'Authorization': 'JWT ' + this.token
-                },
-                responseType: 'json'
-            })
+        axios.get(this.common.host + 'orders/settlement/', {
+            headers: {
+                // 向后端传递JWT
+                'Authorization': 'JWT ' + sessionStorage.token || localStorage.token
+            },
+            responseType: 'json'
+        })
             .then(response => {
                 this.skus = response.data.skus;
                 this.freight = response.data.freight;
@@ -80,15 +82,16 @@ var vm = new Vue({
         on_order_submit: function () {
             if (this.order_submitting == false) {
                 this.order_submitting = true;
-                axios.post(this.host + 'orders/', {
-                        address: this.nowsite,
-                        pay_method: this.pay_method
-                    }, {
-                        headers: {
-                            'Authorization': 'JWT ' + this.token
-                        },
-                        responseType: 'json'
-                    })
+                axios.post(this.common.host + 'orders/', {
+                    address: this.nowsite,
+                    pay_method: this.pay_method
+                }, {
+                    headers: {
+                        // 向后端传递JWT
+                        'Authorization': 'JWT ' + sessionStorage.token || localStorage.token
+                    },
+                    responseType: 'json'
+                })
                     .then(response => {
                         location.href = '/order_success.html?order_id=' + response.data.order_id
                             + '&amount=' + this.payment_amount

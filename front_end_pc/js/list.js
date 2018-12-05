@@ -2,7 +2,7 @@ var vm = new Vue({
     el: '#app',
     delimiters: ['[[', ']]'], // 修改vue模板符号，防止与django冲突
     data: {
-        host: host,
+        common,
         username: sessionStorage.username || localStorage.username,
         user_id: sessionStorage.user_id || localStorage.user_id,
         token: sessionStorage.token || localStorage.token,
@@ -65,7 +65,7 @@ var vm = new Vue({
     mounted: function(){
         this.cat = this.get_query_string('cat');
         this.get_skus();
-        axios.get(this.host+'/categories/'+this.cat+'/', {
+        axios.get(this.common.host+'/categories/'+this.cat+'/', {
                 responseType:'json'
             })
             .then(response => {
@@ -96,7 +96,7 @@ var vm = new Vue({
         },
         // 请求商品列表数据
         get_skus: function(){
-            axios.get(this.host+'/categories/'+this.cat+'/skus/', {
+            axios.get(this.common.host+'/categories/'+this.cat+'/skus/', {
                     params: {
                         page: this.page,
                         page_size: this.page_size,
@@ -132,9 +132,10 @@ var vm = new Vue({
         },
         // 获取购物车数据
         get_cart: function(){
-            axios.get(this.host+'/cart/', {
+            axios.get(this.common.host+'/cart/', {
                     headers: {
-                        'Authorization': 'JWT ' + this.token
+                        // 向后端传递JWT
+                        'Authorization': 'JWT ' + sessionStorage.token || localStorage.token
                     },
                     responseType: 'json',
                     withCredentials: true

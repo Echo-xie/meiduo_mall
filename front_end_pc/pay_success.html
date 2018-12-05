@@ -5,7 +5,7 @@
     <title>美多商城-支付成功</title>
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
-    <script type="text/javascript" src="js/host.js"></script>
+    <script type="text/javascript" src="js/common.js"></script>
     <script type="text/javascript" src="js/vue-2.5.16.js"></script>
     <script type="text/javascript" src="js/axios-0.18.0.min.js"></script>
 </head>
@@ -63,13 +63,13 @@
         var vm = new Vue({
             el: '#app',
             data: {
-                host,
+                common,
                 trade_id: '',
             },
             mounted: function(){
 				// 调用处理支付结果的接口
                 // document.location.search：  即url的查询字符串参数 （包含问号）
-                axios.put(this.host+'/payment/status/'+document.location.search, {}, {
+                axios.put(this.common.host+'/payment/status/'+document.location.search, {}, {
                         responseType: 'json'
                     })
                     .then(response => {

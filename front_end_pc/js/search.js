@@ -2,7 +2,7 @@ var vm = new Vue({
     el: '#app',
     delimiters: ['[[', ']]'], // 修改vue模板符号，防止与django冲突
     data: {
-        host: host,
+        common,
         username: sessionStorage.username || localStorage.username,
         user_id: sessionStorage.user_id || localStorage.user_id,
         token: sessionStorage.token || localStorage.token,
@@ -91,7 +91,7 @@ var vm = new Vue({
 
         // 请求查询结果
         get_search_result: function () {
-            axios.get(this.host + 'skus/search/', {
+            axios.get(this.common.host + 'skus/search/', {
                     params: {
                         text: this.query,
                         page: this.page,

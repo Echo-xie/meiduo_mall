@@ -4,13 +4,13 @@ date: 18-12-1 下午10:49
 """
 from rest_framework.serializers import ModelSerializer
 import re
-
 from rest_framework_jwt.settings import api_settings
-
+from celery_tasks.email.tasks import send_verify_email
 from meiduo_mall.utils.common import get_sms_code_by_mobile
 from users.models import User
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from users.utils import generate_verify_email_url
 
 
 class UsersSerializerBase(ModelSerializer):
@@ -140,3 +140,60 @@ class UserRegisterSerializer(ModelSerializer):
         # 生成的jwt 序列化返回
         user.token = token
         return user
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    """用户详细信息序列化器
+
+    """
+
+    class Meta:
+        """元数据
+
+        """
+        # 实体类
+        model = User
+        # 展示字段
+        fields = ('id', 'username', 'mobile', 'email', 'email_active')
+
+
+class EmailSerializer(serializers.ModelSerializer):
+    """修改用户邮箱序列化器
+
+    """
+
+    class Meta:
+        """元数据
+
+        """
+        # 实体类
+        model = User
+        # 展示字段
+        fields = ('id', 'email')
+        # 自定义字段规则
+        extra_kwargs = {
+            'email': {
+                'required': True
+            }
+        }
+
+    def update(self, instance, validated_data):
+        """更新记录 -- 重写
+
+        :param instance:
+        :param validated_data:
+        :return:
+        """
+        # 获取邮箱
+        email = validated_data['email']
+        # 赋值
+        instance.email = email
+        # 保存信息
+        instance.save()
+
+        # 获取激活邮箱url
+        verify_url = generate_verify_email_url(instance.id)
+        # 发送邮箱 -- celery
+        send_verify_email.delay(email, verify_url)
+
+        return instance

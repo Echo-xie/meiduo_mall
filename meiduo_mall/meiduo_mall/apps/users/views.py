@@ -1,34 +1,45 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.conf import settings
+from itsdangerous import TimedJSONWebSignatureSerializer, BadData
+from rest_framework.generics import RetrieveAPIView, UpdateAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-
-def index(request):
-    """用户视图 -- 首页
-
-    :param request:
-    :return:
-    """
-    return HttpResponse("Hello World!!!")
+from users import user_serializer
+from users.models import User
 
 
-def templates_test(request):
-    """模板测试
-
-    :param request:
-    :return:
-    """
-    return render(request, "cross_domain_test.html")
-
-
-class cross_domain_test(APIView):
-    """跨域请求测试
+class UserDetailView(RetrieveAPIView):
+    """用户详情
 
     """
+    # 指定序列化器
+    serializer_class = user_serializer.UsersSerializerBase
+    # 获取登陆用户
+    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        return Response({"message": "get请求"})
+    def get_object(self):
+        """重写 -- 获取实体类信息
 
-    def post(self, request):
-        return Response({"message": "post请求"})
+        :return:
+        """
+        # 返回已登录的用户信息
+        return self.request.user
+
+
+class EmailView(UpdateAPIView):
+    """修改用户邮箱（修改用户的邮箱字段）
+
+    """
+    # 指定序列化器
+    serializer_class = user_serializer.EmailSerializer
+    # 获取登陆用户
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        """重写 -- 获取实体类信息
+
+        :return:
+        """
+        # 自定义返回当前登陆用户
+        return self.request.user

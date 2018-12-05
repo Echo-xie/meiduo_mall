@@ -2,7 +2,7 @@ var vm = new Vue({
     el: '#app',
     delimiters: ['[[', ']]'],
     data: {
-        host,
+        common,
         username: sessionStorage.username || localStorage.username,
         user_id: sessionStorage.user_id || localStorage.user_id,
         token: sessionStorage.token || localStorage.token,
@@ -40,13 +40,7 @@ var vm = new Vue({
 
         // 添加用户浏览历史记录
         if (this.user_id) {
-            axios.post(this.host+'/browse_histories/', {
-                sku_id: this.sku_id
-            }, {
-                headers: {
-                    'Authorization': 'JWT ' + this.token
-                }
-            })
+            axios.post(this.common.host + '/browse_histories/', {sku_id: this.sku_id}, this.common.config)
         }
 
         this.get_cart();

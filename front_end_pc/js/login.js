@@ -3,7 +3,7 @@ var vm = new Vue({
     el: '#app',
     // 属性
     data: {
-        host: host,
+        host: common,
         error_username: false,
         error_pwd: false,
         error_pwd_message: '请填写密码',
@@ -64,7 +64,7 @@ var vm = new Vue({
             // 如果验证通过
             if (this.error_username == false && this.error_pwd == false) {
                 // ajax post请求 -- 用户登陆
-                axios.post(this.host + 'vm/authorizations/', {
+                axios.post(this.common.host + 'vm/authorizations/', {
                     username: this.username,
                     password: this.password
                 })
@@ -111,7 +111,7 @@ var vm = new Vue({
         // qq登录
         qq_login: function () {
             let next_ = this.get_query_string("next") || "/";
-            axios.get(this.host + "oauth/qq/authorization/?next=" + next_)
+            axios.get(this.common.host + "oauth/qq/authorization/?next=" + next_)
                 .then(resp => {
                     location.href = resp.data.login_url;
                 })
