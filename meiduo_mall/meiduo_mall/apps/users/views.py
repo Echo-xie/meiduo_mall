@@ -6,13 +6,12 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
 from users import user_serializer
+from users.models import Address
 from users.user_serializer import UserAddressSerializer
 
 
 class UserDetailView(RetrieveAPIView):
-    """用户详情
-
-    """
+    """用户详情"""
     # 指定序列化器
     serializer_class = user_serializer.UsersSerializerBase
     # 获取登陆用户
@@ -28,9 +27,7 @@ class UserDetailView(RetrieveAPIView):
 
 
 class EmailView(UpdateAPIView):
-    """修改用户邮箱（修改用户的邮箱字段）
-
-    """
+    """修改用户邮箱（修改用户的邮箱字段）"""
     # 指定序列化器
     serializer_class = user_serializer.EmailSerializer
     # 获取登陆用户
@@ -63,5 +60,6 @@ class AddressViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericView
 
     def get_queryset(self):
         # 获取当前登录用户的地址
-        # return = Address.objects.filter(user=self.request.user, is_deleted=False)
+        # return Address.objects.filter(user=self.request.user, is_deleted=False)
         return self.request.user.addresses.filter(is_deleted=False)
+        # return Address.objects.all()

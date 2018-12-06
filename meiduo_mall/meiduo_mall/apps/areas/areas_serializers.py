@@ -8,9 +8,7 @@ from areas.models import Area
 
 
 class AreaSerializerBase(ModelSerializer):
-    """省市区管理序列化器 -- 基类
-
-    """
+    """省市区管理序列化器 -- 基类"""
 
     class Meta:
         """元数据"""
@@ -21,9 +19,7 @@ class AreaSerializerBase(ModelSerializer):
 
 
 class AreaSerializer(AreaSerializerBase):
-    """地址详情序列化器
-
-    """
+    """地址详情序列化器"""
 
     class Meta:
         """元数据"""

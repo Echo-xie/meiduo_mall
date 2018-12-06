@@ -50,10 +50,18 @@ INSTALLED_APPS = [
     "rest_framework",  # DRF
     "corsheaders",  # 跨域请求
     # 自定义子应用
+    # 用户
     "users.apps.UsersConfig",
+    # 验证
     "verifications.apps.VerificationsConfig",
+    # 第三方开发平台
     "oauth.apps.OauthConfig",
+    # 省市区
     "areas.apps.AreasConfig",
+    # 商品
+    "goods.apps.GoodsConfig",
+    # 广告内容
+    "contents.apps.ContentsConfig",
 ]
 
 # 中间层列表

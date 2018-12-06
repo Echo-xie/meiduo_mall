@@ -11,9 +11,7 @@ from users.models import User
 
 
 class QQUserSerializer(serializers.Serializer):
-    """ QQ登录创建用户序列化器
-
-    """
+    """ QQ登录创建用户序列化器"""
     openid = serializers.CharField(label='openid', write_only=True)
     mobile = serializers.RegexField(label='手机号', regex=r'^1[3-9]\d{9}$', write_only=True)
     password = serializers.CharField(label='密码', max_length=20, min_length=8, write_only=True)

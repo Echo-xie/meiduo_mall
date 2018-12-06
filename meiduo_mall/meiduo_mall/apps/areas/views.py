@@ -7,9 +7,7 @@ from areas.models import Area
 
 
 class AreaListView(APIView):
-    """获取省市区管理列表
-
-    """
+    """获取省市区管理列表"""
 
     # @cache_response(timeout=60 * 60, cache='default')
     def get(self, request, parent):

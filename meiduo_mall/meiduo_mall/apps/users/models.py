@@ -27,10 +27,8 @@ class Address(BaseModel):
     # 应用名.类名
     province = models.ForeignKey('areas.Area', on_delete=models.PROTECT,
                                  related_name='province_addresses', verbose_name='省')
-    city = models.ForeignKey('areas.Area', on_delete=models.PROTECT,
-                             related_name='city_addresses', verbose_name='市')
-    district = models.ForeignKey('areas.Area', on_delete=models.PROTECT,
-                                 related_name='district_addresses', verbose_name='区')
+    city = models.ForeignKey('areas.Area', on_delete=models.PROTECT, related_name='city_addresses', verbose_name='市')
+    district = models.ForeignKey('areas.Area', on_delete=models.PROTECT, related_name='district_addresses', verbose_name='区')
     place = models.CharField(max_length=50, verbose_name='详细地址')
     mobile = models.CharField(max_length=11, verbose_name='手机')
     tel = models.CharField(max_length=20, null=True, blank=True,

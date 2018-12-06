@@ -14,9 +14,7 @@ from users.utils import generate_verify_email_url
 
 
 class UsersSerializerBase(ModelSerializer):
-    """实体类 用户序列化器 -- 基类
-
-    """
+    """实体类 用户序列化器 -- 基类"""
 
     class Meta:
         # 指定实体类
@@ -26,9 +24,7 @@ class UsersSerializerBase(ModelSerializer):
 
 
 class UserRegisterSerializer(ModelSerializer):
-    """用户注册序列化器
-
-    """
+    """用户注册序列化器"""
     # write_only: 只写[写入], 只用于反序列化, 不进行序列化
     password2 = serializers.CharField(label='确认密码', write_only=True)
     sms_code = serializers.CharField(label='短信验证码', write_only=True)
@@ -143,9 +139,7 @@ class UserRegisterSerializer(ModelSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
-    """用户详细信息序列化器
-
-    """
+    """用户详细信息序列化器"""
 
     class Meta:
         """元数据"""
@@ -156,9 +150,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 
 class EmailSerializer(serializers.ModelSerializer):
-    """修改用户邮箱序列化器
-
-    """
+    """修改用户邮箱序列化器"""
 
     class Meta:
         """元数据"""
@@ -199,26 +191,29 @@ class UserAddressSerializer(serializers.ModelSerializer):
     """
     用户地址序列化器
     """
+
     province = serializers.StringRelatedField(read_only=True)
     city = serializers.StringRelatedField(read_only=True)
     district = serializers.StringRelatedField(read_only=True)
+
     # 新增地址时补充的字段(可读可写)
     province_id = serializers.IntegerField(label='省ID', required=True)
     city_id = serializers.IntegerField(label='市ID', required=True)
     district_id = serializers.IntegerField(label='区ID', required=True)
 
-    def validate_mobile(self, value):
-        if not re.match(r'^1[3-9]\d{9}$', value):
-            raise serializers.ValidationError('手机号格式错误')
-        return value
-
-    def create(self, validated_data):
-        """ 保存 """
-        # self.context['request'].user ：获取当前登录用户对象
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
-
     class Meta:
         model = Address
         # 新增地址，不需要用户传递user到服务器，服务器可以自动获取到当前登录用户对象
         exclude = ('user', 'is_deleted', 'create_time', 'update_time')
+
+    def validate(self, attrs):
+        mobile = attrs["mobile"]
+        if not re.match(r'^1[3-9]\d{9}$', mobile):
+            raise serializers.ValidationError('手机号格式错误')
+        return attrs
+
+    def create(self, validated_data):
+        """保存"""
+        # self.context['request'].user ：获取当前登录用户对象
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)

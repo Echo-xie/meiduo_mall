@@ -27,4 +27,8 @@ urlpatterns = [
     url(r"^oauth/", include("oauth.urls")),
     # 省市区管理
     url(r"^areas/", include("areas.urls")),
+    # 商品
+    url(r"^goods/", include("goods.urls")),
+    # 广告
+    url(r"^contents/", include("contents.urls")),
 ]

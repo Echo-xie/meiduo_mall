@@ -14,9 +14,7 @@ from users.user_serializer import UserRegisterSerializer, UsersSerializerBase
 
 
 class SMSCodeView(APIView):
-    """发送短信验证码类视图
-
-    """
+    """发送短信验证码类视图"""
 
     def get(self, request, mobile):
         """get请求
@@ -126,9 +124,7 @@ class UserRegister(CreateAPIView):
 
 
 class VerifyEmailView(APIView):
-    """ 激活用户邮箱
-
-    """
+    """激活用户邮箱"""
 
     def get(self, request):
         # 获取token

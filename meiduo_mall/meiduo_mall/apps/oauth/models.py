@@ -14,9 +14,7 @@ class OAuthQQUser(BaseModel):
     openid = models.CharField(max_length=64, verbose_name='openid', db_index=True)
 
     class Meta:
-        """元数据
-
-        """
+        """元数据"""
         # 数据库表名
         db_table = 'tb_oauth_qq'
         # 详情名称

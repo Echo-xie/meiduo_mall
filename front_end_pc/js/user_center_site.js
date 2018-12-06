@@ -45,6 +45,16 @@ var vm = new Vue({
             .catch(error => {
                 alert(error.response.data);
             });
+        // 查询登陆用户收货地址列表
+        axios.get(this.common.host + 'users/addresses/', this.common.config)
+            .then(response => {
+                console.log(response.data);
+                // 赋值当前登陆用户所有收货地址列表
+                this.addresses = response.data.results;
+            })
+            .catch(error => {
+                console.log(error.response.data);
+            })
     }
     ,
 

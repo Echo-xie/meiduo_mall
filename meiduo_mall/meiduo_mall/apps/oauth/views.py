@@ -14,9 +14,7 @@ from oauth.utils import generate_encrypted_openid
 
 
 class QQURLView(APIView):
-    """提供QQ登录页面网址
-
-    """
+    """提供QQ登录页面网址"""
 
     def get(self, request):
         """获取QQ登陆页面网址
@@ -42,9 +40,7 @@ class QQURLView(APIView):
 
 
 class QQUserView(APIView):
-    """用户扫码登录的回调处理
-
-    """
+    """用户扫码登录的回调处理"""
 
     def get(self, request):
         # 获取请求参数 -- code

@@ -3,7 +3,7 @@ var vm = new Vue({
     el: '#app',
     // 属性
     data: {
-        host: common,
+        common,
         error_username: false,
         error_pwd: false,
         error_pwd_message: '请填写密码',
