@@ -21,3 +21,5 @@ class OAuthQQUser(BaseModel):
         verbose_name = 'QQ登录用户数据'
         # 详情名称复数
         verbose_name_plural = verbose_name
+
+

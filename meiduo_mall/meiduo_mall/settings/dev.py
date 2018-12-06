@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     # 第三方库
     "rest_framework",  # DRF
     "corsheaders",  # 跨域请求
+    'ckeditor',  # 富文本编辑器
+    'ckeditor_uploader',  # 富文本编辑器上传图片模块
     # 自定义子应用
     # 用户
     "users.apps.UsersConfig",
@@ -363,3 +365,23 @@ EMAIL_HOST_USER = 'lnsist@yeah.net'
 EMAIL_HOST_PASSWORD = 'lnsist123'
 # 收件人看到的发件人
 EMAIL_FROM = 'lnsist<lnsist@yeah.net>'
+# 指定使用自定义的文件存储类
+DEFAULT_FILE_STORAGE = 'meiduo_mall.utils.fastdfs.storage.FdfsStorage'
+# FastDFS 客户端配置文件相对路径
+FDFS_CLIENT_CONF = 'meiduo_mall/utils/fastdfs/client.conf'
+# FastDFS服务器图片地址
+FDFS_URL = 'http://image.lnsist.site:8888/'
+# 富文本编辑器ckeditor配置
+CKEDITOR_CONFIGS = {
+    # 默认配置
+    'default': {
+        # 工具条功能
+        'toolbar': 'full',
+        # 编辑器高度
+        'height': 300,
+        # 编辑器宽
+        # 'width': 300,
+    },
+}
+# 上传图片保存的路径，使用了FastDFS后，此路径用不到
+CKEDITOR_UPLOAD_PATH = 'uploads/'
