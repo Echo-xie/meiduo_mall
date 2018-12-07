@@ -1,96 +1,212 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
-	<title>美多商城-用户中心</title>
-	<link rel="stylesheet" type="text/css" href="css/reset.css">
-	<link rel="stylesheet" type="text/css" href="css/main.css">
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>美多商城-用户中心</title>
+    <link rel="stylesheet" type="text/css" href="css/reset.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script type="text/javascript" src="js/common.js"></script>
+    <script type="text/javascript" src="js/axios-0.18.0.min.js"></script>
+    <script type="text/javascript" src="js/vue-2.5.16.js"></script>
 </head>
 <body>
-	<div class="header_con">
-		<div class="header">
-			<div class="welcome fl">欢迎来到美多商城!</div>
-			<div class="fr">
-				<div class="login_info fl">
-					欢迎您：<em>张 山</em>
-				</div>
-				<div class="login_btn fl">
-					<a href="login.html">登录</a>
-					<span>|</span>
-					<a href="register.html">注册</a>
-				</div>
-				<div class="user_link fl">
-					<span>|</span>
-					<a href="user_center_info.html">用户中心</a>
-					<span>|</span>
-					<a href="cart.html">我的购物车</a>
-					<span>|</span>
-					<a href="user_center_order.html">我的订单</a>
-				</div>
-			</div>
-		</div>		
-	</div>
+<div id="app" v-cloak>
+    <div class="header_con">
+        <div class="header">
+            <div class="welcome fl">欢迎来到美多商城!</div>
+            <div class="fr">
+                <div class="login_btn fl">
+                    欢迎您：<em>{{ username }}</em>
+                </div>
+                <div class="login_info fl">
+                    <a href="login.html">登录</a>
+                    <span>|</span>
+                    <a href="register.html">注册</a>
+                </div>
+                <div class="user_link fl">
+                    <span>|</span>
+                    <a href="user_center_info.html">用户中心</a>
+                    <span>|</span>
+                    <a href="cart.html">我的购物车</a>
+                    <span>|</span>
+                    <a href="user_center_order.html">我的订单</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<div class="search_bar clearfix">
-		<a href="index.html" class="logo fl"><img src="images/logo.png"></a>
-		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>
-		<div class="search_con fr mt40">
-			<input type="text" class="input_text fl" name="" placeholder="搜索商品">
-			<input type="button" class="input_btn fr" name="" value="搜索">
-		</div>		
-	</div>
+    <div class="search_bar clearfix">
+        <a href="index.html" class="logo fl"><img src="images/logo.png"></a>
+        <div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>
+        <div class="search_con fr mt40">
+            <input type="text" class="input_text fl" name="" placeholder="搜索商品">
+            <input type="button" class="input_btn fr" name="" value="搜索">
+        </div>
+    </div>
 
-	<div class="main_con clearfix">
-		<div class="left_menu_con clearfix">
-			<h3>用户中心</h3>
-			<ul>
-				<li><a href="user_center_info.html">· 个人信息</a></li>
-				<li><a href="user_center_order.html">· 全部订单</a></li>
+    <div class="main_con clearfix">
+        <div class="left_menu_con clearfix">
+            <h3>用户中心</h3>
+            <ul>
+                <li><a href="user_center_info.html">· 个人信息</a></li>
+                <li><a href="user_center_order.html">· 全部订单</a></li>
                 <li><a href="user_center_site.html">· 收货地址</a></li>
                 <li><a href="user_center_pass.html" class="active">· 修改密码</a></li>
-			</ul>
-		</div>
-		<div class="right_content clearfix">
-				<div class="info_con clearfix">
-				<h3 class="common_title2">修改密码</h3>
-				<div class="site_con pass_change_con">			
+            </ul>
+        </div>
+        <div class="right_content clearfix">
+            <div class="info_con clearfix">
+                <h3 class="common_title2">修改密码</h3>
+                <div class="site_con pass_change_con">
                     <form>
                         <div class="form_group">
                             <label>当前密码：</label>
-                            <input type="password" name="">
+                            <input type="password" @blur="check_old_password" v-model="old_password">
+                            <span v-show="error_old_password" class="error_tip">当前密码错误</span>
                         </div>
                         <div class="form_group">
                             <label>新密码：</label>
-                            <input type="password" name="">
+                            <input type="password" @blur="check_new_password" v-model="new_password">
+                            <span v-show="error_new_password" class="error_tip">密码格式错误(长度8-20)</span>
                         </div>
                         <div class="form_group">
                             <label>确认新密码：</label>
-                            <input type="password" name="">
+                            <input type="password" @blur="check_password_equal" v-model="new_password2">
+                            <span v-show="error_new_password2" class="error_tip">两次密码不一致</span>
                         </div>
-                        <input type="button" name="" value="确 定" class="info_submit">
+                        <input type="button" name="" value="确 定" class="info_submit" @click="save_new_password">
                     </form>
+                </div>
             </div>
-				</div>
-		
-		</div>
-		</div>
-	</div>
+
+        </div>
+    </div>
+</div>
 
 
-
-	<div class="footer">
-		<div class="foot_link">
-			<a href="#">关于我们</a>
-			<span>|</span>
-			<a href="#">联系我们</a>
-			<span>|</span>
-			<a href="#">招聘人才</a>
-			<span>|</span>
-			<a href="#">友情链接</a>		
-		</div>
-		<p>CopyRight © 2016 北京美多商业股份有限公司 All Rights Reserved</p>
-		<p>电话：010-****888    京ICP备*******8号</p>
-	</div>
-	
+<div class="footer">
+    <div class="foot_link">
+        <a href="#">关于我们</a>
+        <span>|</span>
+        <a href="#">联系我们</a>
+        <span>|</span>
+        <a href="#">招聘人才</a>
+        <span>|</span>
+        <a href="#">友情链接</a>
+    </div>
+    <p>CopyRight © 2016 北京美多商业股份有限公司 All Rights Reserved</p>
+    <p>电话：010-****888 京ICP备*******8号</p>
+</div>
+</div>
 </body>
+<script type="text/javascript">
+    // 未登录不能访问个人信息界面
+    let token = sessionStorage.token || localStorage.token;
+    if (!token) {
+        // 未登录，跳转到登录界面
+        location.href = '/login.html?next=/user_center_pass.html';
+    }
+    let vm = new Vue({
+        // 绑定标签
+        el: '#app',
+        // 定义属性
+        data: {
+            // 通用常量
+            common,
+            // 用户名
+            username: sessionStorage.username || localStorage.username,
+            // 当前密码
+            old_password: "",
+            // 新密码
+            new_password: "",
+            // 确认密码
+            new_password2: "",
+            // 当前密码错误
+            error_old_password: false,
+            // 新密码错误
+            error_new_password: false,
+            // 确认密码错误
+            error_new_password2: false,
+        },
+        // 定义方法
+        methods: {
+            // 校验当前密码
+            check_old_password: function () {
+                // 默认校验通过
+                this.error_old_password = false;
+                // 如果当前密码不为空
+                if (this.old_password) {
+                    // ajax请求校验密码是否正确
+                    axios.get(this.common.host + "vm/check_password/" + this.old_password + "/", this.common.config)
+                        .then(resp => {
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            // 密码错误显示错误
+                            this.error_old_password = true;
+                        });
+                }
+            },
+            // 校验新密码
+            check_new_password: function () {
+                // 默认校验通过
+                this.error_new_password = false;
+                // 获取密码输入长度
+                let len = this.new_password.length;
+                // 判断长度 不在 (8-20) 之间
+                if (len < 8 || 20 < len) {
+                    // 显示新密码错误
+                    this.error_new_password = true;
+                    // 函数返回
+                    return;
+                }
+            },
+            // 校验两次密码是否一致
+            check_password_equal: function () {
+                // 默认校验通过
+                this.error_new_password2 = false;
+                // 判断如果两次密码不一致
+                if (this.new_password !== this.new_password2) {
+                    // 显示确认密码错误
+                    this.error_new_password2 = true;
+                    // 函数返回
+                    return;
+                }
+            },
+            // 修改密码
+            save_new_password: function () {
+                // 校验当前密码
+                this.check_old_password();
+                // 校验新密码
+                this.check_new_password();
+                // 校验确认密码
+                this.check_password_equal();
+                // 如果校验都通过
+                if (!this.error_old_password &&
+                    !this.error_new_password &&
+                    !this.error_new_password2) {
+                    // ajax PUT请求, 提交参数 当前密码和新密码
+                    axios.put(this.common.host + "vm/password/",
+                        {old_password: this.old_password, new_password: this.new_password, new_password2: this.new_password2},
+                        this.common.config)
+                        .then(resp => {
+                            // 修改成功
+                            alert("修改密码成功, 请重新登陆");
+                            // 清空session存储
+                            sessionStorage.clear();
+                            // 清空本地存储
+                            localStorage.clear();
+                            // 跳转页面
+                            location.href = '/login.html';
+                        })
+                        .catch(error => {
+                            console.log(error);
+                            this.error_password = true;
+                        });
+                }
+
+            },
+        },
+    })
+</script>
 </html>

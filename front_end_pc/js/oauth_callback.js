@@ -4,7 +4,7 @@ var vm = new Vue({
         common,
         is_show_waiting: true,
 
-        error_password: false,
+        error_old_password: false,
         error_phone: false,
         error_sms_code: false,
         error_phone_message: '',
@@ -150,7 +150,7 @@ var vm = new Vue({
             this.check_phone();
             this.check_sms_code();
             // 检测通过
-            if (!this.error_password && !this.error_phone && !this.error_sms_code) {
+            if (!this.error_old_password && !this.error_phone && !this.error_sms_code) {
                 // 发请求绑定openid和美多用户
                 axios.post(this.common.host + 'oauth/qq/user/', {
                     password: this.password,

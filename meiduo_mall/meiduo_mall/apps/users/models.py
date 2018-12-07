@@ -13,35 +13,38 @@ class User(AbstractUser):
     default_address = models.ForeignKey('Address', related_name='users', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='默认地址')
 
     class Meta:
+        """元数据"""
+        # 数据库表名
         db_table = 'tb_users'
+        # 详情名称
         verbose_name = '用户'
+        # 详情名称复数
         verbose_name_plural = verbose_name
 
 
 class Address(BaseModel):
     """用户地址表"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='addresses', verbose_name='用户')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='addresses', verbose_name='用户')
     title = models.CharField(max_length=20, verbose_name='地址名称')
     receiver = models.CharField(max_length=20, verbose_name='收货人')
-    # 应用名.类名
-    province = models.ForeignKey('areas.Area', on_delete=models.PROTECT,
-                                 related_name='province_addresses', verbose_name='省')
+    province = models.ForeignKey('areas.Area', on_delete=models.PROTECT, related_name='province_addresses', verbose_name='省')
     city = models.ForeignKey('areas.Area', on_delete=models.PROTECT, related_name='city_addresses', verbose_name='市')
     district = models.ForeignKey('areas.Area', on_delete=models.PROTECT, related_name='district_addresses', verbose_name='区')
     place = models.CharField(max_length=50, verbose_name='详细地址')
     mobile = models.CharField(max_length=11, verbose_name='手机')
-    tel = models.CharField(max_length=20, null=True, blank=True,
-                           default='', verbose_name='固定电话')
-    email = models.CharField(max_length=30, null=True, blank=True,
-                             default='', verbose_name='电子邮箱')
+    tel = models.CharField(max_length=20, null=True, blank=True, default='', verbose_name='固定电话')
+    email = models.CharField(max_length=30, null=True, blank=True, default='', verbose_name='电子邮箱')
     is_deleted = models.BooleanField(default=False, verbose_name='逻辑删除')
 
     # is_default = models.BooleanField(default=False, verbose_name='默认地址')
 
     class Meta:
+        """元数据"""
+        # 数据库表名
         db_table = 'tb_address'
+        # 详情名称
         verbose_name = '用户地址'
+        # 详情名称复数
         verbose_name_plural = verbose_name
         # 查询列表数据时的排序
         ordering = ['-update_time']

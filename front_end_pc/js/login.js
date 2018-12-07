@@ -71,9 +71,9 @@ var vm = new Vue({
                     .then(response => {
                         // 使用浏览器本地存储保存token
                         // 清空session级别存储
-                        sessionStorage.clear();
+                        // sessionStorage.clear();
                         // 清空本地级别存储
-                        localStorage.clear();
+                        // localStorage.clear();
                         // 如果记住登陆勾选
                         if (this.remember) {
                             // 记住登录
@@ -81,13 +81,12 @@ var vm = new Vue({
                             localStorage.token = response.data.token;
                             localStorage.user_id = response.data.user_id;
                             localStorage.username = response.data.username;
-                        } else {
-                            // 未记住登录
-                            // 进行session级别存储JWT
-                            sessionStorage.token = response.data.token;
-                            sessionStorage.user_id = response.data.user_id;
-                            sessionStorage.username = response.data.username;
                         }
+                        // 未记住登录
+                        // 进行session级别存储JWT
+                        sessionStorage.token = response.data.token;
+                        sessionStorage.user_id = response.data.user_id;
+                        sessionStorage.username = response.data.username;
                         // 获取跳转页面路径
                         var return_url = this.get_query_string('next');
                         // 如果没有跳转页面 -- 默认跳转至首页

@@ -13,14 +13,28 @@ from rest_framework.exceptions import ValidationError
 from users.utils import generate_verify_email_url
 
 
-class UsersSerializerBase(ModelSerializer):
+class UserSerializerBase(ModelSerializer):
     """实体类 用户序列化器 -- 基类"""
 
     class Meta:
+        """元数据"""
         # 指定实体类
         model = User
         # 指定字段
         fields = "__all__"
+
+
+class UserDetailSerializer(UserSerializerBase):
+    """ 用户详细信息序列化器"""
+    # 添加 token字段, 令牌用于jwt认证, read_only: 只读[读取], 只用于序列化, 不进行反序列化
+    token = serializers.CharField(label='登录状态token', read_only=True)
+
+    class Meta:
+        """元数据"""
+        # 指定实体类
+        model = User
+        # 指定字段
+        fields = ('id', 'username', 'mobile', 'email', 'email_active', "token")
 
 
 class UserRegisterSerializer(ModelSerializer):
@@ -33,9 +47,10 @@ class UserRegisterSerializer(ModelSerializer):
     token = serializers.CharField(label='登录状态token', read_only=True)
 
     class Meta:
+        """元数据"""
         # 指定实体类
         model = User
-        # 字段展示
+        # 字段
         fields = ('id', 'username', 'password', 'password2', 'sms_code', 'mobile', 'allow', "token")
 
         # 修改字段规则
@@ -138,17 +153,6 @@ class UserRegisterSerializer(ModelSerializer):
         return user
 
 
-class UserDetailSerializer(serializers.ModelSerializer):
-    """用户详细信息序列化器"""
-
-    class Meta:
-        """元数据"""
-        # 实体类
-        model = User
-        # 展示字段
-        fields = ('id', 'username', 'mobile', 'email', 'email_active')
-
-
 class EmailSerializer(serializers.ModelSerializer):
     """修改用户邮箱序列化器"""
 
@@ -156,7 +160,7 @@ class EmailSerializer(serializers.ModelSerializer):
         """元数据"""
         # 实体类
         model = User
-        # 展示字段
+        # 字段
         fields = ('id', 'email')
         # 自定义字段规则
         extra_kwargs = {
@@ -191,19 +195,21 @@ class UserAddressSerializer(serializers.ModelSerializer):
     """
     用户地址序列化器
     """
-
+    # 将ID转为字符串展示在页面
     province = serializers.StringRelatedField(read_only=True)
     city = serializers.StringRelatedField(read_only=True)
     district = serializers.StringRelatedField(read_only=True)
 
-    # 新增地址时补充的字段(可读可写)
+    # 后台新增地址时直接输入ID即可
     province_id = serializers.IntegerField(label='省ID', required=True)
     city_id = serializers.IntegerField(label='市ID', required=True)
     district_id = serializers.IntegerField(label='区ID', required=True)
 
     class Meta:
+        """元数据"""
+        # 指定实体类
         model = Address
-        # 新增地址，不需要用户传递user到服务器，服务器可以自动获取到当前登录用户对象
+        # 排除字段
         exclude = ('user', 'is_deleted', 'create_time', 'update_time')
 
     def validate(self, attrs):
@@ -212,8 +218,72 @@ class UserAddressSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('手机号格式错误')
         return attrs
 
+    # def validate_mobile(self, value):
+    #     if not re.match(r'^1[3-9]\d{9}$', value):
+    #         raise serializers.ValidationError('手机号格式错误')
+    #     return super().validated_data()
+
     def create(self, validated_data):
         """保存"""
         # self.context['request'].user ：获取当前登录用户对象
         validated_data['user'] = self.context['request'].user
         return super().create(validated_data)
+
+
+class AddressTitleSerializer(serializers.ModelSerializer):
+    """地址标题序列化器"""
+
+    class Meta:
+        """元数据"""
+        # 实体类
+        model = Address
+        # 字段
+        fields = ('title',)
+
+
+class UserPassWordSerializer(serializers.ModelSerializer):
+    """修改密码序列化器"""
+
+    # 旧密码
+    old_password = serializers.CharField(write_only=True)
+    # 新密码
+    new_password = serializers.CharField(write_only=True)
+    # 确认密码
+    new_password2 = serializers.CharField(write_only=True)
+
+    class Meta:
+        """元数据"""
+        # 实体类
+        model = User
+        # 字段
+        fields = ("old_password", "new_password", "new_password2")
+
+    def validate(self, attrs):
+        """自定义校验"""
+
+        # 获取属性
+        old_password = attrs["old_password"]
+        new_password = attrs["new_password"]
+        new_password2 = attrs["new_password2"]
+        # 获取当前登陆用户
+        user_ = self.context['request'].user
+
+        # 如果旧密码校验失败
+        if not user_.check_password(old_password):
+            #
+            raise ValidationError("当前密码错误")
+
+        # 如果两次密码不一致
+        if new_password != new_password2:
+            #
+            raise ValidationError("两次密码不一致")
+
+        # 返回校验后的属性
+        return attrs
+
+    def update(self, instance, validated_data):
+        """更新"""
+        # 设置新密码
+        instance.set_password(validated_data["new_password"])
+        # 调用父类更新方法
+        return super().update(instance, validated_data)

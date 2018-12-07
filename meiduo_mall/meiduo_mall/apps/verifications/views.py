@@ -2,15 +2,18 @@ from django.conf import settings
 from django_redis import get_redis_connection
 from itsdangerous import TimedJSONWebSignatureSerializer, BadData
 from redis import StrictRedis
+from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.mixins import UpdateModelMixin
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from meiduo_mall.utils.exceptions import logger
 from celery_tasks.sms.tasks import *
 from users.models import User
-from users.user_serializer import UserRegisterSerializer, UsersSerializerBase
+from users.user_serializer import UserRegisterSerializer, UserSerializerBase, UserPassWordSerializer
 
 
 class SMSCodeView(APIView):
@@ -18,7 +21,7 @@ class SMSCodeView(APIView):
 
     def get(self, request, mobile):
         """get请求
-        url[GET]: /vm/sms_code/(?P<mobile>1[3-9]\d{9})/
+        GET /vm/sms_code/(?P<mobile>1[3-9]\d{9})/
 
         :param request: 请求报文
         :param mobile: 手机
@@ -72,11 +75,11 @@ class CheckUsersAttr(GenericViewSet):
     # 查询集
     queryset = User.objects.all()
     # 序列化器
-    serializer_class = UsersSerializerBase
+    serializer_class = UserSerializerBase
 
     def check_username(self, request, username):
         """判断用户名是否存在
-        url[GET]: /vm/username/(?P<username>\w{5,20})/count/
+        GET /vm/username/(?P<username>\w{5,20})/count/
 
         :param request: 请求报文
         :param username: 用户名
@@ -96,7 +99,7 @@ class CheckUsersAttr(GenericViewSet):
 
     def check_mobile(self, request, mobile):
         """判断手机号码是否存在
-        url[GET]: /vm/mobile/(?P<mobile>1[3-9]\d{9})/count/
+        GET /vm/mobile/(?P<mobile>1[3-9]\d{9})/count/
 
         :param request: 请求报文
         :param mobile: 手机号码
@@ -117,7 +120,7 @@ class CheckUsersAttr(GenericViewSet):
 
 class UserRegister(CreateAPIView):
     """用户注册
-    url[GET]: /vm/user_register/
+    GET /vm/user_register/
     """
     # 指定序列化器
     serializer_class = UserRegisterSerializer
@@ -159,3 +162,116 @@ class VerifyEmailView(APIView):
         user.save()
 
         return Response({'message': 'OK'})
+
+
+# class PassWordViewSet(GenericViewSet):
+#     """用户密码管理视图集
+#     GET /vm/password/ -- 验证密码
+#     PUT /vm/password/ -- 修改密码
+#
+#     """
+#     # 序列化器
+#     serializer_class = UserPassWordSerializer
+#     # 验证身份
+#     permission_classes = [IsAuthenticated]
+#
+#     def get_object(self):
+#         return self.request.user
+#
+#     # GET请求
+#     @action(methods="get", detail=True)
+#     def check_password(self, request, password):
+#         """校验密码"""
+#
+#         # 校验请求密码和原密码是否一致
+#         result = request.user.check_password(password)
+#         # 如果不一致
+#         if not result:
+#             # 提示错误信息
+#             return Response({"message": "密码错误"}, status=400)
+#         # 密码一致
+#         return Response({"message": "ok"})
+#
+#     # PUT请求
+#     @action(methods="put", detail=True)
+#     def password(self, request):
+#         """修改密码"""
+#         # 获取当前登陆用户
+#         old_user = request.user  # type: AbstractUser
+#         # 获取请求参数
+#         old_password = request.data.get("old_password")
+#         new_password = request.data.get("new_password")
+#
+#         try:
+#             # 验证密码是否正确
+#             old_user.check_password(old_password)
+#         except Exception as e:
+#             print(e)
+#             # 密码错误
+#             return Response({"message": "当前密码错误"}, status=400)
+#         # 序列化
+#         s = UserSerializerBase(instance=old_user, data={"password": new_password})
+#         # 校验参数
+#         s.is_valid()
+#         # 保存新密码
+#         old_user.set_password(new_password)
+#         # 保存数据
+#         old_user.save()
+#
+#         return Response({"message": "ok"})
+
+class PassWordViewSet(UpdateModelMixin, GenericViewSet):
+    """用户密码管理视图集
+    GET /vm/password/ -- 验证密码
+    PUT /vm/password/ -- 修改密码
+
+    """
+    # 序列化器
+    serializer_class = UserPassWordSerializer
+    # 验证身份
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+    # GET请求
+    @action(methods="get", detail=True)
+    def check_password(self, request, password):
+        """校验密码"""
+
+        # 校验请求密码和原密码是否一致
+        result = request.user.check_password(password)
+        # 如果不一致
+        if not result:
+            # 提示错误信息
+            return Response({"message": "密码错误"}, status=400)
+        # 密码一致
+        return Response({"message": "ok"})
+
+    # PUT请求
+    @action(methods="put", detail=True)
+    def password(self, request):
+        """修改密码"""
+        # 获取当前登陆用户
+        old_user = request.user  # type: AbstractUser
+        # 获取请求参数
+        old_password = request.data.get("old_password")
+        new_password = request.data.get("new_password")
+
+        try:
+            # 验证密码是否正确
+            old_user.check_password(old_password)
+        except Exception as e:
+            print(e)
+            # 密码错误
+            return Response({"message": "当前密码错误"}, status=400)
+        # 序列化
+        s = UserSerializerBase(instance=old_user, data={"password": new_password})
+        # 校验参数
+        s.is_valid()
+        # 保存新密码
+        old_user.set_password(new_password)
+        # 保存数据
+        old_user.save()
+
+        return Response({"message": "ok"})

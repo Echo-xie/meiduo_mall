@@ -25,6 +25,7 @@ var vm = new Vue({
                 this.mobile = response.data.mobile;
                 this.email = response.data.email;
                 this.email_active = response.data.email_active;
+                localStorage.token = response.data.token;
             })
             .catch(error => {
                 // 未登录，跳转到登录界面

@@ -3,7 +3,7 @@ var vm = new Vue({
     data: {
         common,
         error_name: false,
-        error_password: false,
+        error_old_password: false,
         error_check_password: false,
         error_phone: false,
         error_allow: false,
@@ -171,7 +171,7 @@ var vm = new Vue({
             this.check_phone();
             this.check_sms_code();
             this.check_allow();
-            if (!this.error_name && !this.error_password && !this.error_check_password && !this.error_phone && !this.error_sms_code && !this.error_allow) {
+            if (!this.error_name && !this.error_old_password && !this.error_check_password && !this.error_phone && !this.error_sms_code && !this.error_allow) {
                 // alert('注册');
                 var data = {
                     username: this.username,

@@ -70,7 +70,8 @@
 
 
             <!-- 复制：循环显示用户的多个收件地址 -->
-            <div class="site_con" v-for="(address, index) in addresses">
+            <!--默认地址置顶-->
+            <div class="site_con" v-for="(address, index) in addresses" v-if="address.id==default_address_id">
                 <div class="site_title">
                     <div v-if="is_set_title[index]">
                         <input v-model="input_title" type="text" name="">
@@ -79,24 +80,49 @@
                     </div>
                     <div v-else>
                         <h3>{{ address.title }}</h3>
-                        <a @click="show_edit_title(index)"></a>
+                        <a href="#" @click="show_edit_title(index)"></a>
                     </div>
-                    <em v-if="address.id==default_address_id">默认地址</em>
+                    <em>默认地址</em>
                     <span @click="del_address(index)">×</span>
                 </div>
                 <ul class="site_list">
                     <li><span>收货人：</span><b>{{ address.receiver }}</b></li>
-                    <li><span>所在地区：</span><b>{{ address.province }} {{ address.city }}
-                        {{ address.district }}</b></li>
+                    <li><span>所在地区：</span><b>{{ address.province }} {{ address.city }} {{ address.district }}</b></li>
                     <li><span>地址：</span><b>{{ address.place }}</b></li>
                     <li><span>手机：</span><b>{{ address.mobile }}</b></li>
                     <li><span>固定电话：</span><b>{{ address.tel }}</b></li>
                     <li><span>电子邮箱：</span><b>{{ address.email }}</b></li>
                 </ul>
                 <div class="down_btn">
-                    <a v-if="address.id!=default_address_id" @click="set_default(index)">
-                        设为默认</a>
-                    <a @click="show_edit(index)">编辑</a>
+                    <a href="#" v-if="address.id!=default_address_id" @click="set_default(index)">设为默认</a>
+                    <a href="#" @click="show_edit(index)">编辑</a>
+                </div>
+            </div>
+            <!--非默认地址展示-->
+            <div class="site_con" v-for="(address, index) in addresses" v-if="address.id!=default_address_id">
+                <div class="site_title">
+                    <div v-if="is_set_title[index]">
+                        <input v-model="input_title" type="text" name="">
+                        <input @click="save_title(index)" type="button" name="" value="保 存">
+                        <input @click="cancel_title(index)" type="reset" name="" value="取 消">
+                    </div>
+                    <div v-else>
+                        <h3>{{ address.title }}</h3>
+                        <a href="#" @click="show_edit_title(index)"></a>
+                    </div>
+                    <span @click="del_address(index)">×</span>
+                </div>
+                <ul class="site_list">
+                    <li><span>收货人：</span><b>{{ address.receiver }}</b></li>
+                    <li><span>所在地区：</span><b>{{ address.province }} {{ address.city }} {{ address.district }}</b></li>
+                    <li><span>地址：</span><b>{{ address.place }}</b></li>
+                    <li><span>手机：</span><b>{{ address.mobile }}</b></li>
+                    <li><span>固定电话：</span><b>{{ address.tel }}</b></li>
+                    <li><span>电子邮箱：</span><b>{{ address.email }}</b></li>
+                </ul>
+                <div class="down_btn">
+                    <a href="#" v-if="address.id!=default_address_id" @click="set_default(index)">设为默认</a>
+                    <a href="#" @click="show_edit(index)">编辑</a>
                 </div>
             </div>
 
