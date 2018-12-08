@@ -22,7 +22,13 @@ urlpatterns = [
     # 用户激活邮箱验证
     url(r"^email/$", views.VerifyEmailView.as_view()),
     # 用户密码校验
-    url(r'^check_password/(?P<password>\w+)/$', views.PassWordViewSet.as_view({'get': 'check_password'})),
+    # url(r'^check_password/(?P<password>\w+)/$', views.PassWordViewSet.as_view({'get': 'check_password'})),
     # 修改用户密码
-    url(r'^password/$', views.PassWordViewSet.as_view({"put": "update"})),
+    # url(r'^password/$', views.PassWordViewSet.as_view({"put": "update"})),
 ]
+
+
+router = DefaultRouter()
+# 用户收货地址, 增删改查视图集 -- 视图集不用正则表达开头和结尾, 自带
+router.register(r'password', views.PassWordViewSet, base_name='password')
+urlpatterns += router.urls

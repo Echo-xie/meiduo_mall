@@ -283,7 +283,10 @@ class UserPassWordSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """更新"""
+
         # 设置新密码
         instance.set_password(validated_data["new_password"])
-        # 调用父类更新方法
-        return super().update(instance, validated_data)
+        # 保存数据
+        instance.save()
+        # 返回更新后数据
+        return instance

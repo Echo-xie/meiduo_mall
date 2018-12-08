@@ -74,8 +74,9 @@ var vm = new Vue({
                     .then(response => {
                         // 获取城市列表
                         this.cities = response.data;
-                        // 清空区县列表
-                        this.districts = "";
+                        //
+                        this.form_address.city_id = "";
+
                     })
                     .catch(error => {
                         console.log(error.response.data);
@@ -97,6 +98,8 @@ var vm = new Vue({
                         console.log(error.response.data);
                         this.districts = [];
                     });
+            } else {
+                this.districts = [];
             }
         }
     },

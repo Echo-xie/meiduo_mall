@@ -4,7 +4,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer, BadData
 from redis import StrictRedis
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import CreateAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -164,66 +164,10 @@ class VerifyEmailView(APIView):
         return Response({'message': 'OK'})
 
 
-# class PassWordViewSet(GenericViewSet):
-#     """用户密码管理视图集
-#     GET /vm/password/ -- 验证密码
-#     PUT /vm/password/ -- 修改密码
-#
-#     """
-#     # 序列化器
-#     serializer_class = UserPassWordSerializer
-#     # 验证身份
-#     permission_classes = [IsAuthenticated]
-#
-#     def get_object(self):
-#         return self.request.user
-#
-#     # GET请求
-#     @action(methods="get", detail=True)
-#     def check_password(self, request, password):
-#         """校验密码"""
-#
-#         # 校验请求密码和原密码是否一致
-#         result = request.user.check_password(password)
-#         # 如果不一致
-#         if not result:
-#             # 提示错误信息
-#             return Response({"message": "密码错误"}, status=400)
-#         # 密码一致
-#         return Response({"message": "ok"})
-#
-#     # PUT请求
-#     @action(methods="put", detail=True)
-#     def password(self, request):
-#         """修改密码"""
-#         # 获取当前登陆用户
-#         old_user = request.user  # type: AbstractUser
-#         # 获取请求参数
-#         old_password = request.data.get("old_password")
-#         new_password = request.data.get("new_password")
-#
-#         try:
-#             # 验证密码是否正确
-#             old_user.check_password(old_password)
-#         except Exception as e:
-#             print(e)
-#             # 密码错误
-#             return Response({"message": "当前密码错误"}, status=400)
-#         # 序列化
-#         s = UserSerializerBase(instance=old_user, data={"password": new_password})
-#         # 校验参数
-#         s.is_valid()
-#         # 保存新密码
-#         old_user.set_password(new_password)
-#         # 保存数据
-#         old_user.save()
-#
-#         return Response({"message": "ok"})
-
 class PassWordViewSet(UpdateModelMixin, GenericViewSet):
     """用户密码管理视图集
-    GET /vm/password/ -- 验证密码
-    PUT /vm/password/ -- 修改密码
+    GET /vm/password/<pk>/if_right/ -- 验证密码
+    PUT /vm/password/<pk>/ -- 修改密码
 
     """
     # 序列化器
@@ -235,43 +179,15 @@ class PassWordViewSet(UpdateModelMixin, GenericViewSet):
         return self.request.user
 
     # GET请求
-    @action(methods="get", detail=True)
-    def check_password(self, request, password):
+    @action(methods=["get"], detail=True)
+    def if_right(self, request, pk):
         """校验密码"""
 
         # 校验请求密码和原密码是否一致
-        result = request.user.check_password(password)
+        result = self.get_object().check_password(pk)
         # 如果不一致
         if not result:
             # 提示错误信息
             return Response({"message": "密码错误"}, status=400)
         # 密码一致
-        return Response({"message": "ok"})
-
-    # PUT请求
-    @action(methods="put", detail=True)
-    def password(self, request):
-        """修改密码"""
-        # 获取当前登陆用户
-        old_user = request.user  # type: AbstractUser
-        # 获取请求参数
-        old_password = request.data.get("old_password")
-        new_password = request.data.get("new_password")
-
-        try:
-            # 验证密码是否正确
-            old_user.check_password(old_password)
-        except Exception as e:
-            print(e)
-            # 密码错误
-            return Response({"message": "当前密码错误"}, status=400)
-        # 序列化
-        s = UserSerializerBase(instance=old_user, data={"password": new_password})
-        # 校验参数
-        s.is_valid()
-        # 保存新密码
-        old_user.set_password(new_password)
-        # 保存数据
-        old_user.save()
-
         return Response({"message": "ok"})

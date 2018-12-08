@@ -115,6 +115,8 @@
             common,
             // 用户名
             username: sessionStorage.username || localStorage.username,
+            // 用户ID
+            user_id: sessionStorage.user_id || localStorage.user_id,
             // 当前密码
             old_password: "",
             // 新密码
@@ -137,7 +139,7 @@
                 // 如果当前密码不为空
                 if (this.old_password) {
                     // ajax请求校验密码是否正确
-                    axios.get(this.common.host + "vm/check_password/" + this.old_password + "/", this.common.config)
+                    axios.get(this.common.host + "vm/password/" + this.old_password + "/if_right/", this.common.config)
                         .then(resp => {
                         })
                         .catch(error => {
@@ -186,7 +188,7 @@
                     !this.error_new_password &&
                     !this.error_new_password2) {
                     // ajax PUT请求, 提交参数 当前密码和新密码
-                    axios.put(this.common.host + "vm/password/",
+                    axios.put(this.common.host + "vm/password/" + this.user_id + "/",
                         {old_password: this.old_password, new_password: this.new_password, new_password2: this.new_password2},
                         this.common.config)
                         .then(resp => {
