@@ -104,3 +104,37 @@ class SKUSpecificationSerializerBase(ModelSerializer):
         model = SKUSpecification
         # 字段
         fields = "__all__"
+
+
+class CategorySerializer(ModelSerializer):
+    """类别序列化器"""
+
+    class Meta:
+        """元数据"""
+        # 实体类
+        model = GoodsCategory
+        # 字段
+        fields = ('id', 'name')
+
+
+class ChannelSerializer(ModelSerializer):
+    """频道序列化器"""
+    category = CategorySerializer()
+
+    class Meta:
+        """元数据"""
+        # 实体类
+        model = GoodsChannel
+        # 字段
+        fields = ('category', 'url')
+
+
+class SKUSerializer(ModelSerializer):
+    """序列化器序输出商品SKU信息"""
+
+    class Meta:
+        """元数据"""
+        # 实体类
+        model = SKU
+        # 字段
+        fields = ('id', 'name', 'price', 'default_image_url', 'comments')

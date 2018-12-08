@@ -1,9 +1,33 @@
 from django.contrib import admin
-
 from . import models
 
+
+class GoodsCategoryAdmin(admin.ModelAdmin):
+    """自定义管理admin站点"""
+
+    def save_model(self, request, obj, form, change):
+        """admin后台新增或修改了数据时调用"""
+
+        # 数据保存
+        obj.save()
+        # 导包
+        from celery_tasks.html.tasks import generate_static_list_search_html
+        # 生成静态页面
+        generate_static_list_search_html.delay()
+
+    def delete_model(self, request, obj):
+        """admin后台删除了数据时调用"""
+
+        # 数据删除
+        obj.delete()
+        # 导包
+        from celery_tasks.html.tasks import generate_static_list_search_html
+        # 生成静态页面
+        generate_static_list_search_html.delay()
+
+
 # 商品类别
-admin.site.register(models.GoodsCategory)
+admin.site.register(models.GoodsCategory, GoodsCategoryAdmin)
 # SKU具体规格
 admin.site.register(models.SKUSpecification)
 # 商品频道

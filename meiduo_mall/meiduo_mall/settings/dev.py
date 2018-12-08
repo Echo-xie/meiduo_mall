@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "corsheaders",  # 跨域请求
     'ckeditor',  # 富文本编辑器
     'ckeditor_uploader',  # 富文本编辑器上传图片模块
+    'django_crontab',  # 定时任务
+    'django_filters',  # 商品列表数据的过滤操作
     # 自定义子应用
     # 用户
     "users.apps.UsersConfig",
@@ -370,7 +372,7 @@ DEFAULT_FILE_STORAGE = 'meiduo_mall.utils.fastdfs.storage.FdfsStorage'
 # FastDFS 客户端配置文件相对路径
 FDFS_CLIENT_CONF = 'meiduo_mall/utils/fastdfs/client.conf'
 # FastDFS服务器图片地址
-FDFS_URL = 'http://image.lnsist.site:8888/'
+FDFS_URL = 'http://image.lnsist.top:8888/'
 # 富文本编辑器ckeditor配置
 CKEDITOR_CONFIGS = {
     # 默认配置
@@ -385,3 +387,26 @@ CKEDITOR_CONFIGS = {
 }
 # 上传图片保存的路径，使用了FastDFS后，此路径用不到
 CKEDITOR_UPLOAD_PATH = 'uploads/'
+# 静态页面文件夹
+GENERATED_STATIC_HTML_FILES_DIR = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'front_end_pc')
+# 定时任务
+CRONJOBS = [
+    # 参数1: 定时时间设置，表示每隔3分钟执行一次
+    # 参数2: 要定义执行的函数
+    # 参数3: 日志
+    ('*/3 * * * *', 'contents.crons.generate_static_index_html', '>> /home/lnsist/AllProjects/PycharmProjecs/MeiDuo/meiduo_mall/logs/crontab.log'),
+
+    # 基本格式 :
+    # * * * * *
+    # 分时日月周    命令
+    # M: 分钟（0-59）  每分钟用*或者 */1表示
+    # H：小时（0-23） （0表示0点）
+    # D：天（1-31）
+    # m: 月（1-12）
+    # d: 一星期内的天（0~6，0为星期天）。
+    #
+    # “*” 代表取值范围内的数字,
+    # “/” 代表”每”,
+    # “-” 代表从某个数字到某个数字,
+    # “,” 分开几个离散的数字
+]
