@@ -133,7 +133,7 @@ var vm = new Vue({
         },
         // 获取购物车数据
         get_cart: function () {
-            axios.get(this.common.host + '/cart/', {
+            axios.get(this.common.host + 'cart/', {
                 headers: {
                     // 向后端传递JWT
                     'Authorization': 'JWT ' + sessionStorage.token || localStorage.token
