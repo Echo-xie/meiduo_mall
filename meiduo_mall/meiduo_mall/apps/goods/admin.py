@@ -1,5 +1,6 @@
 from django.contrib import admin
 from . import models
+from celery_tasks.html.tasks import generate_static_list_search_html
 
 
 class GoodsCategoryAdmin(admin.ModelAdmin):
@@ -10,20 +11,18 @@ class GoodsCategoryAdmin(admin.ModelAdmin):
 
         # 数据保存
         obj.save()
-        # 导包
-        from celery_tasks.html.tasks import generate_static_list_search_html
-        # 生成静态页面
-        generate_static_list_search_html.delay()
+        # 生成静态页面 -- 商品列表页面[list.html] 和 搜索商品页面[search.html]
+        generate_static_list_search_html.delay("list.html")
+        generate_static_list_search_html.delay("search.html")
 
     def delete_model(self, request, obj):
         """admin后台删除了数据时调用"""
 
         # 数据删除
         obj.delete()
-        # 导包
-        from celery_tasks.html.tasks import generate_static_list_search_html
-        # 生成静态页面
-        generate_static_list_search_html.delay()
+        # 生成静态页面 -- 商品列表页面[list.html] 和 搜索商品页面[search.html]
+        generate_static_list_search_html.delay("list.html")
+        generate_static_list_search_html.delay("search.html")
 
 
 # 商品类别
