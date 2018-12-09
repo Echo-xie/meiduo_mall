@@ -2,9 +2,11 @@
 
 date: 18-12-6 下午4:32
 """
+from drf_haystack.serializers import HaystackSerializer
 from rest_framework.serializers import ModelSerializer
 
 from goods.models import GoodsCategory, SKUSpecification, GoodsChannel, Brand, Goods, GoodsSpecification, SpecificationOption, SKU, SKUImage
+from goods.search_indexes import SKUIndex
 
 
 class GoodsCategorySerializerBase(ModelSerializer):
@@ -138,3 +140,16 @@ class SKUSerializer(ModelSerializer):
         model = SKU
         # 字段
         fields = ('id', 'name', 'price', 'default_image_url', 'comments')
+
+
+class SKUIndexSerializer(HaystackSerializer):
+    """SKU索引查询序列化器
+    HaystackSerializer: Haystack指定继承序列化器
+    """
+
+    class Meta:
+        """元数据"""
+        # 索引类
+        index_classes = [SKUIndex]
+        # 字段
+        fields = ('text', 'id', 'name', 'price', 'default_image_url', 'comments')

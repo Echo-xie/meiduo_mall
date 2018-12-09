@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_haystack.viewsets import HaystackViewSet
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 
 from goods.models import GoodsCategory, SKU
-from goods.goods_serializer import ChannelSerializer, CategorySerializer, SKUSerializer
+from goods.goods_serializer import ChannelSerializer, CategorySerializer, SKUSerializer, SKUIndexSerializer
 
 
 class CategoryView(GenericAPIView):
@@ -59,7 +60,9 @@ class CategoryView(GenericAPIView):
 
 
 class SKUListView(ListAPIView):
-    """查询商品列表数据"""
+    """查询商品列表数据
+    GET /goods/skus_list/
+    """
 
     # 序列化器
     serializer_class = SKUSerializer
@@ -72,3 +75,14 @@ class SKUListView(ListAPIView):
     ordering_fields = ('create_time', 'price', 'sales')
     # 过滤字段 (类别)
     filter_fields = ('category',)
+
+
+class SKUSearchViewSet(HaystackViewSet):
+    """SKU搜索视图集
+    HaystackViewSet： 查一条，查多条
+    GET /goods/skus_search/
+    """
+    # 索引实体类
+    index_models = [SKU]
+    # 序列化器
+    serializer_class = SKUIndexSerializer

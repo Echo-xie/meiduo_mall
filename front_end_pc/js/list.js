@@ -95,7 +95,7 @@ var vm = new Vue({
         },
         // 请求商品列表数据
         get_skus: function () {
-            axios.get(this.common.host + 'goods/skus/', {
+            axios.get(this.common.host + 'goods/skus_list/', {
                 params: {
                     category: this.cat,
                     page: this.page,
@@ -158,7 +158,7 @@ var vm = new Vue({
         },
         // 获取热销商品数据
         get_hot_goods: function () {
-            axios.get(this.common.host + 'goods/skus/', {
+            axios.get(this.common.host + 'goods/skus_list/', {
                 params: {
                     category: this.cat,
                     page: 1,

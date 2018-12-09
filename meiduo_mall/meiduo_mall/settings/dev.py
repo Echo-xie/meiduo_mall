@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'ckeditor_uploader',  # 富文本编辑器上传图片模块
     'django_crontab',  # 定时任务
     'django_filters',  # 商品列表数据的过滤操作
+    'haystack',  # 干草堆, 全文检索框架, 简化开发, 方便的对全文检索引擎对接
     # 自定义子应用
     # 用户
     "users.apps.UsersConfig",
@@ -410,3 +411,16 @@ CRONJOBS = [
     # “-” 代表从某个数字到某个数字,
     # “,” 分开几个离散的数字
 ]
+# haystack全文检索框架配置
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 引擎
+        'ENGINE': 'haystack.backends.elasticsearch_backend.ElasticsearchSearchEngine',
+        # 引擎路径 -- 此处为elasticsearch运行的服务器ip地址, 端口号默认为9200
+        'URL': 'http://192.168.8.114:9200/',
+        # 指定elasticsearch建立的索引库的名称
+        'INDEX_NAME': 'meiduo',
+    },
+}
+# 信号处理, 定义更新规则 -- 当添加、修改、删除数据时, 自动更新索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'

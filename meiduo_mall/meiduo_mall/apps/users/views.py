@@ -68,8 +68,8 @@ class AddressCount(GenericAPIView):
         """GET请求 -- 获取当前用户收货地址"""
 
         # 获取当前登陆用户地址总数
-        count = request.user.addresses.count()
-        # 不应该做判断
+        count = request.user.addresses.filter(is_deleted=False).count()
+        # 此视图只应返回当前用户的收货地址数量, 不应该做判断
         # if count >= 10:
         #     return Response({'message': '收货地址个数已达到上限, 无法新增收货地址'}, status=400)
         # 返回当前用户收货地址数量
@@ -129,7 +129,7 @@ class AddressViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, GenericVi
         """重写 -- 用户地址保存"""
 
         # 获取当前用户收货地址总数
-        count = self.request.user.addresses.count()
+        count = self.request.user.addresses.filter(is_deleted=False).count()
         # 如果当前用户收货地址总数 大于等于 10
         if count >= constants.USER_ADDRESS_COUNTS_LIMIT:
             # 返回异常信息
