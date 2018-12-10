@@ -67,6 +67,8 @@ INSTALLED_APPS = [
     "goods.apps.GoodsConfig",
     # 广告内容
     "contents.apps.ContentsConfig",
+    # 购物车
+    "carts.apps.CartsConfig",
 ]
 
 # 中间层列表
@@ -233,6 +235,14 @@ CACHES = {
     "history": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://:123456@127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    # 保存购物车商品
+    "cart": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://:123456@127.0.0.1:6379/3",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }

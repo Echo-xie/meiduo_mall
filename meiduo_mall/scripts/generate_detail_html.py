@@ -8,7 +8,9 @@ import os
 import django
 
 # 添加导包路径 (把 scripts 的上一级目录添加到导包路径sys.path)
-sys.path.insert(0, '../')
+sys.path.insert(0, '/home/lnsist/AllProjects/PycharmProjecs/MeiDuo/meiduo_mall')
+
+print(sys.path)
 
 # 设置当前脚本运行配置文件, 初始化django环境
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "meiduo_mall.settings.dev")

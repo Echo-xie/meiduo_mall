@@ -13,7 +13,7 @@ from rest_framework.viewsets import GenericViewSet
 from meiduo_mall.utils.exceptions import logger
 from celery_tasks.sms.tasks import *
 from users.models import User
-from users.user_serializer import UserRegisterSerializer, UserSerializerBase, UserPassWordSerializer
+from users.serializer import UserRegisterSerializer, UserSerializerBase, UserPassWordSerializer
 
 
 class SMSCodeView(APIView):

@@ -17,7 +17,7 @@ var vm = new Vue({
         sku_price: price,
         cart_total_count: 0, // 购物车总数量
         cart: [], // 购物车数据
-        hots: [], // 热销商品
+        hot_skus: [], // 热销商品
         cat: cat, // 商品类别
         comments: [], // 评论信息
         score_classes: {
@@ -37,6 +37,7 @@ var vm = new Vue({
 
     mounted: function () {
         this.get_sku_id();
+        this.get_hot_goods();
 
         // 添加用户浏览历史记录
         if (this.user_id) {
@@ -81,7 +82,26 @@ var vm = new Vue({
 
         // 添加购物车
         add_cart: function () {
-
+            let data = {
+                sku_id: parseInt(this.sku_id),
+                count: this.sku_count
+            };
+            let config = {
+                headers: { // 通过请求头往服务器传递登录状态
+                    'Authorization': 'JWT ' + this.token
+                },
+                // 注意：必须指定，传递cookie给服务器 -- 跨域请求
+                withCredentials: true
+            };
+            axios.post(this.common.host + 'carts/action/', data, config)
+                .then(response => {
+                    alert('添加购物车成功');
+                    this.cart_total_count += response.data.count;
+                })
+                .catch(error => {
+                    alert('添加购物车失败');
+                    console.log(error.response.data);
+                })
         },
 
         // 获取购物车数据
@@ -92,6 +112,26 @@ var vm = new Vue({
         // 获取商品评价信息
         get_comments: function () {
 
+        },
+        // 获取热销排行
+        get_hot_goods: function () {
+            axios.get(this.common.host + 'goods/skus_list/', {
+                params: {
+                    category: this.cat,
+                    page: 1,
+                    page_size: 10,
+                    ordering: "-sales"
+                }
+            })
+                .then(response => {
+                    this.hot_skus = response.data.results;
+                    for (var i = 0; i < this.hot_skus.length; i++) {
+                        this.hot_skus[i].url = '/goods/' + this.hot_skus[i].id + ".html";
+                    }
+                })
+                .catch(error => {
+                    console.log(error.response.data);
+                })
         }
     }
 });

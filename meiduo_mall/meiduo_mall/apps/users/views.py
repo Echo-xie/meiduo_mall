@@ -8,10 +8,10 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework_jwt.settings import api_settings
 
 from docs import constants
-from goods.goods_serializer import SKUSerializer
+from goods.serializers import SKUSerializer
 from goods.models import SKU
-from users import user_serializer
-from users.user_serializer import UserAddressSerializer, AddressTitleSerializer, AddBrowseHistorySerializer
+from users import serializer
+from users.serializer import UserAddressSerializer, AddressTitleSerializer, AddBrowseHistorySerializer
 
 
 class UserDetailView(RetrieveAPIView):
@@ -20,7 +20,7 @@ class UserDetailView(RetrieveAPIView):
     """
 
     # 指定序列化器
-    serializer_class = user_serializer.UserDetailSerializer
+    serializer_class = serializer.UserDetailSerializer
     # 验证用户 -- 获取登陆用户
     permission_classes = [IsAuthenticated]
 
@@ -49,7 +49,7 @@ class EmailView(UpdateAPIView):
     """
 
     # 指定序列化器
-    serializer_class = user_serializer.EmailSerializer
+    serializer_class = serializer.EmailSerializer
     # 获取登陆用户
     permission_classes = [IsAuthenticated]
 

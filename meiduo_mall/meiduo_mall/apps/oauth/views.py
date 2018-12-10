@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework_jwt.settings import api_settings
 
 from oauth.models import OAuthQQUser
-from oauth.qq_serializers import QQUserSerializer
+from oauth.serializers import QQUserSerializer
 from oauth.utils import generate_encrypted_openid
 
 

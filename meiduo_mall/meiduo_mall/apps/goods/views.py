@@ -6,7 +6,7 @@ from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 
 from goods.models import GoodsCategory, SKU
-from goods.goods_serializer import ChannelSerializer, CategorySerializer, SKUSerializer, SKUIndexSerializer
+from goods.serializers import ChannelSerializer, CategorySerializer, SKUSerializer, SKUIndexSerializer
 
 
 class CategoryView(GenericAPIView):

@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_extensions.cache.decorators import cache_response
 
-from areas.areas_serializers import AreaSerializer
+from areas.serializers import AreaSerializer
 from areas.models import Area
 
 
