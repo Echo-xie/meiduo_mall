@@ -24,13 +24,13 @@ class QQUserSerializer(serializers.Serializer):
         :return:
         """
         # 手机
-        mobile_ = attrs['mobile']
+        mobile_ = attrs.get('mobile')
         # 短信验证码
-        sms_code_ = attrs['sms_code']
+        sms_code_ = attrs.get('sms_code')
         # 密码
-        password_ = attrs['password']
+        password_ = attrs.get('password')
         # 获取openid, 校验openid是否有效
-        openid_ = attrs['openid']
+        openid_ = attrs.get('openid')
 
         # 解密
         openid_ = check_encrypted_openid(openid_)

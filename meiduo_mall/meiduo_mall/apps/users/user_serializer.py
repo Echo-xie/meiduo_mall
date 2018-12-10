@@ -2,10 +2,12 @@
 
 date: 18-12-1 下午10:49
 """
+from django_redis import get_redis_connection
 from rest_framework.serializers import ModelSerializer
 import re
 from rest_framework_jwt.settings import api_settings
 from celery_tasks.email.tasks import send_verify_email
+from goods.models import SKU
 from meiduo_mall.utils.common import get_sms_code_by_mobile
 from users.models import User, Address
 from rest_framework import serializers
@@ -87,15 +89,15 @@ class UserRegisterSerializer(ModelSerializer):
     def validate(self, attrs):
         # 获取请求体数据
         # 密码
-        _password = attrs['password']
+        _password = attrs.get('password')
         # 确认密码
-        _password2 = attrs['password2']
+        _password2 = attrs.get('password2')
         # 手机号码
-        _mobile = attrs['mobile']
+        _mobile = attrs.get('mobile')
         # 短信验证码
-        _sms_code = attrs['sms_code']
+        _sms_code = attrs.get('sms_code')
         # 同意协议
-        _allow = attrs["allow"]
+        _allow = attrs.get("allow")
 
         # 如果两次密码不一致
         if _password != _password2:
@@ -177,7 +179,7 @@ class EmailSerializer(serializers.ModelSerializer):
         :return:
         """
         # 获取邮箱
-        email = validated_data['email']
+        email = validated_data.get('email')
         # 赋值
         instance.email = email
         # 保存信息
@@ -192,9 +194,7 @@ class EmailSerializer(serializers.ModelSerializer):
 
 
 class UserAddressSerializer(serializers.ModelSerializer):
-    """
-    用户地址序列化器
-    """
+    """用户地址序列化器"""
     # 将ID转为字符串展示在页面
     province = serializers.StringRelatedField(read_only=True)
     city = serializers.StringRelatedField(read_only=True)
@@ -226,7 +226,7 @@ class UserAddressSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """保存"""
         # self.context['request'].user ：获取当前登录用户对象
-        validated_data['user'] = self.context['request'].user
+        validated_data['user'] = self.context.get('request').user
         return super().create(validated_data)
 
 
@@ -262,9 +262,9 @@ class UserPassWordSerializer(serializers.ModelSerializer):
         """自定义校验"""
 
         # 获取属性
-        old_password = attrs["old_password"]
-        new_password = attrs["new_password"]
-        new_password2 = attrs["new_password2"]
+        old_password = attrs.get("old_password")
+        new_password = attrs.get("new_password")
+        new_password2 = attrs.get("new_password2")
         # 获取当前登陆用户
         user_ = self.context['request'].user
 
@@ -285,8 +285,51 @@ class UserPassWordSerializer(serializers.ModelSerializer):
         """更新"""
 
         # 设置新密码
-        instance.set_password(validated_data["new_password"])
+        instance.set_password(validated_data.get("new_password"))
         # 保存数据
         instance.save()
         # 返回更新后数据
         return instance
+
+
+class AddBrowseHistorySerializer(serializers.Serializer):
+    """添加用户浏览历史序列化器"""
+
+    sku_id = serializers.IntegerField(label="商品SKU编号", min_value=1)
+
+    def validate(self, attrs):
+        """自定义校验方法"""
+
+        # 获取sku_id
+        sku_id = attrs.get("sku_id")
+        try:
+            # 校验sku_id是否存在
+            SKU.objects.get(id=sku_id)
+        except SKU.DoesNotExist:
+            raise serializers.ValidationError('该商品不存在')
+        return attrs
+
+    def create(self, validated_data):
+        """保存"""
+
+        # 序列化器用于GenericAPIView时，会有一个字典类型的属性叫context，里面包含了request对象
+        # 获取登陆用户ID
+        user_id = self.context.get('request').user.id
+        # 获取sku_id
+        sku_id = validated_data.get('sku_id')
+
+        # 获取数据库连接
+        redis_conn = get_redis_connection("history")
+        # 生成管道
+        pl = redis_conn.pipeline()
+
+        # 移除已经存在的本商品浏览记录
+        pl.lrem("history_%s" % user_id, 0, sku_id)
+        # 添加新的浏览记录
+        pl.lpush("history_%s" % user_id, sku_id)
+        # 只保存最多5条记录
+        pl.ltrim("history_%s" % user_id, 0, 4)
+        # 管道执行
+        pl.execute()
+
+        return validated_data

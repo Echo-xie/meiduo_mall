@@ -10,6 +10,8 @@ urlpatterns = [
     url(r'^email/$', views.EmailView.as_view()),
     # 获取收货地址数量
     url(r'^address/count/$', views.AddressCount.as_view()),
+    # 保存用户浏览记录
+    url(r"^browse_histories/$", views.BrowseHistoryView.as_view()),
 ]
 
 router = DefaultRouter()

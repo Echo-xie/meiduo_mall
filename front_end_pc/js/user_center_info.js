@@ -35,6 +35,13 @@ var vm = new Vue({
             });
 
         // 2. 补充请求浏览历史
+        axios.get(this.common.host + 'goods/browse_histories/', this.common.config)
+            .then(response => {
+                this.histories = response.data;
+                for (var i = 0; i < this.histories.length; i++) {
+                    this.histories[i].url = '/goods/' + this.histories[i].id + '.html';
+                }
+            })
     },
 
     methods: {
