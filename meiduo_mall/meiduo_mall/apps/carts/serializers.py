@@ -65,3 +65,9 @@ class CartDeleteSerializer(serializers.Serializer):
             raise serializers.ValidationError('商品不存在')
         # 返回验证成功后的数据
         return attrs
+
+
+class CartSelectAllSerializer(serializers.Serializer):
+    """购物车全选"""
+
+    selected = serializers.BooleanField(label='全选')

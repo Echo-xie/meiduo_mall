@@ -7,7 +7,7 @@ var vm = new Vue({
         token: sessionStorage.token || localStorage.token,
         cart: [],					// 购物车中所有的商品
         total_selected_count: 0,
-        origin_input: 0     // 用于记录手动输入前的值
+        origin_input: 0,     // 用于记录手动输入前的值
     },
 
     computed: {
@@ -36,17 +36,38 @@ var vm = new Vue({
             return total.toFixed(2); // 保留两位小数
         },
 
-        // 当前全选按钮是否为勾选状态
-        selected_all: function () {
-            var selected = true;
-            for (var i = 0; i < this.cart.length; i++) {
-                if (this.cart[i].selected == false) {
-                    selected = false;   // 只要有一个商品没有勾选,全选按钮就不打勾
-                    break;
+        // 当前全选按钮是否为勾选状态 -- get, set方法
+        selected_all: {
+            get: function () {
+                // 默认当前为全选
+                var selected = true;
+                // 循环所有购物车商品
+                for (var i = 0; i < this.cart.length; i++) {
+                    // 如果有一个商品没有勾选, 就不是全选
+                    if (this.cart[i].selected == false) {
+                        // 勾选状态为false
+                        selected = false;
+                        break;
+                    }
                 }
+                // 返回勾选状态
+                return selected;
+            },
+            set: function () {
+
             }
-            return selected;
         }
+        // 下面只有get没有set在浏览器会报错
+        // selected_all: function () {
+        //     var selected = true;
+        //     for (var i = 0; i < this.cart.length; i++) {
+        //         if (this.cart[i].selected == false) {
+        //             selected = false;   // 只要有一个商品没有勾选,全选按钮就不打勾
+        //             break;
+        //         }
+        //     }
+        //     return selected;
+        // }
     },
 
     mounted: function () {
@@ -104,8 +125,28 @@ var vm = new Vue({
         },
 
         // 全选商品
-        on_selected_all: function () {
+        on_selected_all: function (item) {
+            // 获取当前取反的勾选状态 [当前为勾选, 那么点击则变为不勾选]
             var selected = !this.selected_all;
+            // 发请求保存商品的勾选状态
+            var data = {
+                selected: selected
+            };
+            axios.put(this.common.host + 'carts/selection/', data, {
+                headers: {
+                    'Authorization': 'JWT ' + this.token
+                },
+                withCredentials: true // 传递cookie给服务器
+            })
+                .then(response => {
+                    // 设置商品全选或全不选
+                    for (var i = 0; i < this.cart.length; i++) {
+                        this.cart[i].selected = selected;
+                    }
+                })
+                .catch(error => {
+                    console.log(error.response.data);
+                })
 
         },
 
