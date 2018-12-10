@@ -40,7 +40,7 @@ var vm = new Vue({
 
         // 添加用户浏览历史记录
         if (this.user_id) {
-            axios.post(this.common.host + 'goods/browse_histories/', {sku_id: this.sku_id}, this.common.config)
+            axios.post(this.common.host + 'users/browse_histories/', {sku_id: this.sku_id}, this.common.config)
         }
 
         this.get_cart();
