@@ -10,6 +10,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
+from rest_framework_jwt.views import ObtainJSONWebToken
+
+from carts.utils import merge_cart_cookie_to_redis
 from meiduo_mall.utils.exceptions import logger
 from celery_tasks.sms.tasks import *
 from users.models import User
@@ -191,3 +194,23 @@ class PassWordViewSet(UpdateModelMixin, GenericViewSet):
             return Response({"message": "密码错误"}, status=400)
         # 密码一致
         return Response({"message": "ok"})
+
+
+class UserAuthorizeView(ObtainJSONWebToken):
+    """重写 -- Django用户认证方法"""
+
+    def post(self, request, *args, **kwargs):
+        # 调用父类用户认证方法, 获取返回结果
+        response = super().post(request, *args, **kwargs)
+
+        # 实例化序列化器
+        serializer = self.get_serializer(data=request.data)
+        # 反序列化校验数据
+        if serializer.is_valid():
+            # serializer: JSONWebTokenSerializer
+            # 序列化器校验通过后返回了登录成功的user对象
+            user = serializer.validated_data.get('user')
+            # 合并购物车商品
+            response = merge_cart_cookie_to_redis(request, response, user)
+        # 返回响应
+        return response

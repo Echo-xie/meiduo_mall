@@ -18,7 +18,9 @@ urlpatterns = [
     # 用户注册
     url(r'^user_register/$', views.UserRegister.as_view()),
     # 用户登陆 -- 调用JWT的验证登陆
-    url(r"^authorizations/$", obtain_jwt_token),
+    # url(r"^authorizations/$", obtain_jwt_token),
+    # 用户登陆 -- 重写JWT的验证登陆, 添加购物车合并
+    url(r"^authorizations/$", views.UserAuthorizeView.as_view()),
     # 用户激活邮箱验证
     url(r"^email/$", views.VerifyEmailView.as_view()),
     # 用户密码校验
@@ -26,7 +28,6 @@ urlpatterns = [
     # 修改用户密码
     # url(r'^password/$', views.PassWordViewSet.as_view({"put": "update"})),
 ]
-
 
 router = DefaultRouter()
 # 用户收货地址, 增删改查视图集 -- 视图集不用正则表达开头和结尾, 自带

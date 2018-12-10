@@ -67,7 +67,7 @@ var vm = new Vue({
                 axios.post(this.common.host + 'vm/authorizations/', {
                     username: this.username,
                     password: this.password
-                })
+                }, {withCredentials: true})
                     .then(response => {
                         // 使用浏览器本地存储保存token
                         // 清空session级别存储
@@ -105,7 +105,8 @@ var vm = new Vue({
                         this.error_pwd = true;
                     })
             }
-        },
+        }
+        ,
 
         // qq登录
         qq_login: function () {

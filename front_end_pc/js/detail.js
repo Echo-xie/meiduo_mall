@@ -86,14 +86,7 @@ var vm = new Vue({
                 sku_id: parseInt(this.sku_id),
                 count: this.sku_count
             };
-            let config = {
-                headers: { // 通过请求头往服务器传递登录状态
-                    'Authorization': 'JWT ' + this.token
-                },
-                // 注意：必须指定，传递cookie给服务器 -- 跨域请求
-                withCredentials: true
-            };
-            axios.post(this.common.host + 'carts/action/', data, config)
+            axios.post(this.common.host + 'carts/action/', data, this.common.config)
                 .then(response => {
                     alert('添加购物车成功');
                     this.cart_total_count += response.data.count;

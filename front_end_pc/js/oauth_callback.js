@@ -22,30 +22,29 @@ var vm = new Vue({
     mounted: function () {
         // 从路径中获取qq重定向返回的code
         let code = this.get_query_string('code');
-        axios.get(this.common.host + 'oauth/qq/user/?code=' + code)
-            .then(response => {
-                // 如果有token, 表示用户已绑定, 并登录成功
-                if (response.data.token) {
-                    // 保存登录成功的jwt
-                    sessionStorage.clear();
-                    localStorage.clear();
-                    // session级别存储
-                    sessionStorage.user_id = response.data.user_id;
-                    sessionStorage.username = response.data.username;
-                    sessionStorage.token = response.data.token;
+        axios.get(this.common.host + 'oauth/qq/user/?code=' + code, {withCredentials: true}).then(response => {
+            // 如果有token, 表示用户已绑定, 并登录成功
+            if (response.data.token) {
+                // 保存登录成功的jwt
+                sessionStorage.clear();
+                localStorage.clear();
+                // session级别存储
+                sessionStorage.user_id = response.data.user_id;
+                sessionStorage.username = response.data.username;
+                sessionStorage.token = response.data.token;
 
-                    // 获取state跳转页面
-                    var state = this.get_query_string('state');
-                    // 跳转
-                    location.href = state
-                    // location.href = decodeURIComponent(state);  // url解码
-                } else { // 用户未绑定
-                    // 获取openid
-                    this.openid = response.data.openid;
-                    // 显示绑定界面
-                    this.is_show_waiting = false;
-                }
-            })
+                // 获取state跳转页面
+                var state = this.get_query_string('state');
+                // 跳转
+                location.href = state
+                // location.href = decodeURIComponent(state);  // url解码
+            } else { // 用户未绑定
+                // 获取openid
+                this.openid = response.data.openid;
+                // 显示绑定界面
+                this.is_show_waiting = false;
+            }
+        })
             .catch(error => {
                 alert(error.response.data.message);
             })
@@ -157,7 +156,7 @@ var vm = new Vue({
                     mobile: this.mobile,
                     sms_code: this.sms_code,
                     openid: this.openid
-                })
+                }, {withCredentials: true})
                     .then(response => {
                         // 绑定成功，即登录成功，需要记录用户登录状态
                         sessionStorage.clear();

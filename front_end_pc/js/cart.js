@@ -72,14 +72,7 @@ var vm = new Vue({
 
     mounted: function () {
         // 获取购物车数据
-        axios.get(this.common.host + 'carts/action/', {
-            headers: {
-                // 传递登录状态jwt
-                'Authorization': 'JWT ' + this.token
-            },
-            // 传递cookie给服务器
-            withCredentials: true
-        })
+        axios.get(this.common.host + 'carts/action/', this.common.config)
             .then(response => {
                 // 获取返回购物车数据
                 this.cart = response.data;
@@ -132,12 +125,7 @@ var vm = new Vue({
             var data = {
                 selected: selected
             };
-            axios.put(this.common.host + 'carts/selection/', data, {
-                headers: {
-                    'Authorization': 'JWT ' + this.token
-                },
-                withCredentials: true // 传递cookie给服务器
-            })
+            axios.put(this.common.host + 'carts/selection/', data, this.common.config)
                 .then(response => {
                     // 设置商品全选或全不选
                     for (var i = 0; i < this.cart.length; i++) {
@@ -180,17 +168,13 @@ var vm = new Vue({
             if (isNaN(val) || val <= 0) {
                 this.cart[index].count = this.origin_input;
             } else {
-                // 更新购物车数据
-                axios.put(this.common.host + 'carts/action/', {
+                let data_ = {
                     sku_id: this.cart[index].id,
                     count: val,
                     selected: this.cart[index].selected
-                }, {
-                    headers: {
-                        'Authorization': 'JWT ' + this.token
-                    },
-                    withCredentials: true
-                })
+                }
+                // 更新购物车数据
+                axios.put(this.common.host + 'carts/action/', data_, this.common.config)
                     .then(response => {
                         this.cart[index].count = response.data.count;
                     })

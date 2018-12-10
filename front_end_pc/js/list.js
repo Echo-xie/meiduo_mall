@@ -133,14 +133,7 @@ var vm = new Vue({
         },
         // 获取购物车数据
         get_cart: function () {
-            axios.get(this.common.host + 'cart/', {
-                headers: {
-                    // 向后端传递JWT
-                    'Authorization': 'JWT ' + sessionStorage.token || localStorage.token
-                },
-                responseType: 'json',
-                withCredentials: true
-            })
+            axios.get(this.common.host + 'cart/', this.common.config)
                 .then(response => {
                     this.cart = response.data;
                     this.cart_total_count = 0;

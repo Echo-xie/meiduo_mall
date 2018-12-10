@@ -242,3 +242,50 @@ class CartsData(object):
         action_fun = eval("self." + action + "_action")
         # 返回运行结果
         return action_fun()
+
+
+def merge_cart_cookie_to_redis(request, response, user):
+    """合并cookie中的购物车数据到redis中
+
+    :param request: 请求对象, 用于获取cookie
+    :param response: 响应对象,用于清除cookie
+    :param user: 登录用户, 用于获取用户id
+    :return:
+    """
+    # 获取cookie购物车数据(base64字符串)
+    cookie_cart = request.COOKIES.get('cart')
+    # 如果没有数据
+    if not cookie_cart:
+        # 直接返回
+        return response
+
+    # base64字符串 --> 字典  --  cookie购物车信息
+    # {2: {'count':1, 'selected':False}, 3: {'count':1, 'selected':False}}
+    cookie_cart = pickle.loads(base64.b64decode(cookie_cart.encode()))
+
+    # 合并cookie数据到redis中, 如果cookie和redis中存在相同的商品,则以cookie中的为准
+    # 连接数据库
+    redis_conn = get_redis_connection('cart')
+    # 生成管道
+    pl = redis_conn.pipeline()
+    # 循环cookie中的购物车信息
+    for sku_id, dict_count_selected in cookie_cart.items():
+        # cookie中商品数量
+        count = dict_count_selected['count']
+        # cookie中商品勾选状态
+        selected = dict_count_selected['selected']
+        # 数据库添加
+        pl.hset('cart_%s' % user.id, sku_id, count)
+        # 如果当前商品为勾选
+        if selected:
+            # 添加购物车商品勾选数据
+            pl.sadd('cart_selected_%s' % user.id, sku_id)
+        else:
+            # 删除购物车商品勾选数据
+            pl.srem('cart_selected_%s' % user.id, sku_id)
+    # 管道执行
+    pl.execute()
+    # 清除cookie数据
+    response.delete_cookie('cart')
+    # 返回响应
+    return response
