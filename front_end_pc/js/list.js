@@ -75,7 +75,7 @@ var vm = new Vue({
             .catch(error => {
                 console.log(error.response.data)
             });
-        // this.get_cart();
+        this.get_cart();
         this.get_hot_goods();
     },
     methods: {
@@ -133,7 +133,7 @@ var vm = new Vue({
         },
         // 获取购物车数据
         get_cart: function () {
-            axios.get(this.common.host + 'cart/', this.common.config)
+            axios.get(this.common.host + 'carts/action/', this.common.config)
                 .then(response => {
                     this.cart = response.data;
                     this.cart_total_count = 0;
@@ -142,6 +142,7 @@ var vm = new Vue({
                             this.cart[i].name = this.cart[i].name.substring(0, 25) + '...';
                         }
                         this.cart_total_count += this.cart[i].count;
+                        this.cart[i].url = '/goods/' + this.cart[i].id + ".html";
 
                     }
                 })

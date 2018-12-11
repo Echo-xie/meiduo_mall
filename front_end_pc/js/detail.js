@@ -99,7 +99,22 @@ var vm = new Vue({
 
         // 获取购物车数据
         get_cart: function () {
+            axios.get(this.common.host + 'carts/action/', this.common.config)
+                .then(response => {
+                    this.cart = response.data;
+                    this.cart_total_count = 0;
+                    for (var i = 0; i < this.cart.length; i++) {
+                        if (this.cart[i].name.length > 25) {
+                            this.cart[i].name = this.cart[i].name.substring(0, 25) + '...';
+                        }
+                        this.cart_total_count += this.cart[i].count;
+                        this.cart[i].url = '/goods/' + this.cart[i].id + ".html";
 
+                    }
+                })
+                .catch(error => {
+                    console.log(error.response.data);
+                })
         },
 
         // 获取商品评价信息

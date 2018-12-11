@@ -81,6 +81,7 @@ var vm = new Vue({
                 for (var i = 0; i < this.cart.length; i++) {
                     // 当前商品小计金额 = 当前商品单价 * 当前商品数量    结果取2位小数
                     this.cart[i].amount = (parseFloat(this.cart[i].price) * this.cart[i].count).toFixed(2);
+                    this.cart[i].url = '/goods/' + this.cart[i].id + ".html";
                 }
             })
             .catch(error => {

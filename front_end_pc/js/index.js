@@ -13,20 +13,35 @@ var vm = new Vue({
         f3_tab: 1, // 3F 标签页控制
     },
 
-    mounted: function(){
+    mounted: function () {
         this.get_cart();
     },
 
     methods: {
         // 退出
-        logout: function(){
+        logout: function () {
             sessionStorage.clear();
             localStorage.clear();
             location.href = '/login.html';
         },
         // 获取购物车数据
-        get_cart: function(){
+        get_cart: function () {
+            axios.get(this.common.host + 'carts/action/', this.common.config)
+                .then(response => {
+                    this.cart = response.data;
+                    this.cart_total_count = 0;
+                    for (var i = 0; i < this.cart.length; i++) {
+                        if (this.cart[i].name.length > 25) {
+                            this.cart[i].name = this.cart[i].name.substring(0, 25) + '...';
+                        }
+                        this.cart_total_count += this.cart[i].count;
+                        this.cart[i].url = '/goods/' + this.cart[i].id + ".html";
 
-        }
+                    }
+                })
+                .catch(error => {
+                    console.log(error.response.data);
+                })
+        },
     }
 });

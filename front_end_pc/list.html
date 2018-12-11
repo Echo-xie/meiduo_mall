@@ -59,11 +59,12 @@
 
             <ul class="cart_goods_show">
                 <li v-for="sku in cart">
-                    <img :src="sku.default_image_url" alt="商品图片">
+                    <a :href="sku.url"><img :src="sku.default_image_url" alt="商品图片"></a>
                     <h4>[[sku.name]]</h4>
                     <div>[[sku.count]]</div>
                 </li>
             </ul>
+
         </div>
 
     </div>

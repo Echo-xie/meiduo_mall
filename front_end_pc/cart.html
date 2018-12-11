@@ -60,7 +60,7 @@
         <li class="col01">
             <input type="checkbox" name="" v-model="sku.selected" @change="on_input(index)">
         </li>
-        <li class="col02"><img :src="sku.default_image_url"></li>
+        <li class="col02"><a :href="sku.url"><img :src="sku.default_image_url"></a></li>
         <li class="col03">{{ sku.name }}</li>
         <li class="col05">{{ sku.price }}元</li>
         <li class="col06">
