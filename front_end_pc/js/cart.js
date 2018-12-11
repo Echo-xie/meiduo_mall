@@ -40,7 +40,7 @@ var vm = new Vue({
         selected_all: {
             get: function () {
                 // 默认当前为全选
-                var selected = true;
+                var selected = this.cart.length ? true : false;
                 // 循环所有购物车商品
                 for (var i = 0; i < this.cart.length; i++) {
                     // 如果有一个商品没有勾选, 就不是全选

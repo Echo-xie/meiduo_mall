@@ -226,6 +226,44 @@ class CartsData(object):
             # 返回响应
             return response
 
+    def selection_action(self):
+        """修改购物车商品信息 -- 全选或全不选"""
+
+        # 如果已登录 -- 数据在Redis中保存
+        if self.user_.is_authenticated():
+            # 获取数据库连接
+            redis_conn = get_redis_connection('cart')
+            # 查询数据库获取数据
+            sku_id_list = redis_conn.hkeys('cart_%s' % self.user_.id)
+            # 如果是全选
+            if self.selected:
+                # 添加购物车商品勾选信息, 拆包sku_id_list
+                redis_conn.sadd('cart_selected_%s' % self.user_.id, *sku_id_list)
+            # 否则
+            else:
+                # 删除购物车商品勾选信息, 拆包sku_id_list
+                redis_conn.srem('cart_selected_%s' % self.user_.id, *sku_id_list)
+            # 返回响应
+            return Response({'message': 'OK'})
+        # 未登陆 -- 数据在cookie中
+        else:
+            # 实例化响应
+            response = Response({'message': 'OK'})
+            # 如果有购物车信息
+            if self.cookie_cart:
+                # base64字符串 -> 字典
+                cart = pickle.loads(base64.b64decode(self.cookie_cart.encode()))
+                # 循环购物车信息
+                for sku_id in cart:
+                    # 修改所有商品为选中状态
+                    cart[sku_id]['selected'] = self.selected
+                # 字典 --> base64字符串
+                cookie_cart = base64.b64encode(pickle.dumps(cart)).decode()
+                # 设置cookie返回数据, 参数3 = cookie有效期
+                response.set_cookie('cart', cookie_cart, constants.CART_COOKIE_EXPIRES)
+            # 返回响应
+            return response
+
     def run(self):
         """运行函数
 
@@ -234,7 +272,7 @@ class CartsData(object):
         # 获取动作小写属性
         action = self.action.lower()  # type: str
         # 如果动作不在指定属性中
-        if not action in ["get", "post", "put", "delete"]:
+        if not action in ["get", "post", "put", "delete", "selection"]:
             # action属性错误, 返回404
             return Response({"message": "action属性错误"}, status=status.HTTP_404_NOT_FOUND)
         # 通过action构成表达式
