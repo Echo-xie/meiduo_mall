@@ -36,8 +36,6 @@ class CartsData(object):
         # 获取当前用户
         self.user_ = request.user
 
-        # 购物车信息 -- 字典类型
-        self.cart = {}
         # cookie购物车信息
         self.cookie_cart = request.COOKIES.get('cart', {})
         # 如果cookie中有购物车信息
@@ -47,7 +45,7 @@ class CartsData(object):
             self.cookie_cart = pickle.loads(base64.b64decode(self.cookie_cart.encode()))
 
         # 获取数据库连接
-        redis_conn = get_redis_connection('cart')
+        redis_conn = get_redis_connection('carts')
         # 生成管道
         self.pl = redis_conn.pipeline()  # type: StrictPipeline
 
@@ -74,6 +72,8 @@ class CartsData(object):
     def get_action(self):
         """获取购物车数据"""
 
+        # 返回购物车数据
+        response_cart = {}
         # 如果是已登录用户 -- 数据存储在Redis
         if self.user_.is_authenticated():
             # 获取数据库中当前用户的购物车商品信息
@@ -90,7 +90,7 @@ class CartsData(object):
             # 拼装字典 -- 循环购物车商品信息, sku_id: 商品id, count: 数量
             for sku_id, count in dict_cart.items():
                 # 当前购物车商品
-                self.cart[int(sku_id)] = {
+                response_cart[int(sku_id)] = {
                     # 商品数量
                     'count': int(count),
                     # 是否选择 -- 判断当前商品是否在商品勾选信息中
@@ -100,16 +100,17 @@ class CartsData(object):
         else:
             # 如果有cookie购物车数据
             if self.cookie_cart:
-                self.cart = self.cookie_cart
+                # 获取cookie购物车数据
+                response_cart = self.cookie_cart
 
         # 查询购物车中所有的商品
-        skus = SKU.objects.filter(id__in=self.cart.keys())
+        skus = SKU.objects.filter(id__in=response_cart.keys())
         # 循环sku列表, 添加两个字段: 商品数量和勾选状态
         for sku in skus:
             # sku当前购物车中的数量
-            sku.count = self.cart[sku.id]['count']
+            sku.count = response_cart[sku.id]['count']
             # sku当前购物车中是否勾选状态
-            sku.selected = self.cart[sku.id]['selected']
+            sku.selected = response_cart[sku.id]['selected']
 
         # 响应序列化数据
         serializer = CartSKUSerializer(skus, many=True)
@@ -232,7 +233,7 @@ class CartsData(object):
         # 如果已登录 -- 数据在Redis中保存
         if self.user_.is_authenticated():
             # 获取数据库连接
-            redis_conn = get_redis_connection('cart')
+            redis_conn = get_redis_connection('carts')
             # 查询数据库获取数据
             sku_id_list = redis_conn.hkeys('cart_%s' % self.user_.id)
             # 如果是全选
@@ -303,7 +304,7 @@ def merge_cart_cookie_to_redis(request, response, user):
 
     # 合并cookie数据到redis中, 如果cookie和redis中存在相同的商品,则以cookie中的为准
     # 连接数据库
-    redis_conn = get_redis_connection('cart')
+    redis_conn = get_redis_connection('carts')
     # 生成管道
     pl = redis_conn.pipeline()
     # 循环cookie中的购物车信息

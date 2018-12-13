@@ -11,7 +11,7 @@ from goods.serializers import ChannelSerializer, CategorySerializer, SKUSerializ
 
 class CategoryView(GenericAPIView):
     """商品列表页面包屑导航
-    GET /categories/(?P<pk>\d+)/
+    GET categories/(?P<pk>\d+)/
     """
 
     # 查询集 -- 所有商品类别
@@ -61,7 +61,7 @@ class CategoryView(GenericAPIView):
 
 class SKUListView(ListAPIView):
     """查询商品列表数据
-    GET /goods/skus_list/
+    GET goods/skus_list/
     """
 
     # 序列化器
@@ -80,7 +80,7 @@ class SKUListView(ListAPIView):
 class SKUSearchViewSet(HaystackViewSet):
     """SKU搜索视图集
     HaystackViewSet： 查一条，查多条
-    GET /goods/skus_search/
+    GET goods/skus_search/
     """
     # 索引实体类
     index_models = [SKU]

@@ -5,10 +5,10 @@ from carts.utils import CartsData
 
 class CartView(APIView):
     """购物车视图 -- 未登陆用户购物车存放在cookie中
-    GET /carts/action/
-    POST /carts/action/
-    PUT /carts/action/
-    DELETE /carts/action/
+    GET carts/action/
+    POST carts/action/
+    PUT carts/action/
+    DELETE carts/action/
 
     """
 
@@ -47,7 +47,7 @@ class CartView(APIView):
 
 class CartSelectAllView(APIView):
     """购物车全选和全不选
-    PUT /carts/selection/
+    PUT carts/selection/
     """
 
     def perform_authentication(self, request):
@@ -70,10 +70,10 @@ class CartSelectAllView(APIView):
 # 未封装前
 # class CartView(APIView):
 #     """购物车视图 -- 未登陆用户购物车存放在cookie中
-#     GET /carts/action/
-#     POST /carts/action/
-#     PUT /carts/action/
-#     DELETE /carts/action/
+#     GET carts/action/
+#     POST carts/action/
+#     PUT carts/action/
+#     DELETE carts/action/
 #
 #     """
 #
@@ -95,7 +95,7 @@ class CartSelectAllView(APIView):
 #         user = request.user
 #         # 用户已登录，从redis中读取
 #         if user.is_authenticated():
-#             redis_conn = get_redis_connection('cart')
+#             redis_conn = get_redis_connection('carts')
 #             pl = redis_conn.pipeline
 #             dict_cart = pl.hgetall('cart_%s' % user.id)  # {1: 2, 2: 2}
 #             list_cart_selected = pl.smembers('cart_selected_%s' % user.id)
@@ -146,7 +146,7 @@ class CartSelectAllView(APIView):
 #         user = request.user
 #         if user.is_authenticated():  # 判断是否已登录
 #             # 用户已登录，在redis中保存
-#             redis_conn = get_redis_connection('cart')
+#             redis_conn = get_redis_connection('carts')
 #             pl = redis_conn.pipeline()
 #             # {1: {'count':2, 'selected':False}, 2: {'count':2, 'selected':False}}
 #             # 增加购物车商品数量
@@ -203,7 +203,7 @@ class CartSelectAllView(APIView):
 #         user = request.user
 #         if user.is_authenticated():
 #             # 用户已登录，在redis中保存
-#             redis_conn = get_redis_connection('cart')
+#             redis_conn = get_redis_connection('carts')
 #             pl = redis_conn.pipeline()
 #             # 修改商品数量
 #             pl.hset('cart_%s' % user.id, sku_id, count)
@@ -245,7 +245,7 @@ class CartSelectAllView(APIView):
 #         user = request.user
 #         if user.is_authenticated():
 #             # 用户已登录，在redis中保存
-#             redis_conn = get_redis_connection('cart')
+#             redis_conn = get_redis_connection('carts')
 #             pl = redis_conn.pipeline()
 #             pl.hdel('cart_%s' % user.id, sku_id)
 #             pl.srem('cart_selected_%s' % user.id, sku_id)
@@ -272,7 +272,7 @@ class CartSelectAllView(APIView):
 #
 # class CartSelectAllView(APIView):
 #     """购物车全选和全不选
-#     PUT /carts/selection/
+#     PUT carts/selection/
 #     """
 #
 #     def perform_authentication(self, request):
@@ -301,7 +301,7 @@ class CartSelectAllView(APIView):
 #         # 如果已登录 -- 数据在Redis中保存
 #         if user.is_authenticated():
 #             # 获取数据库连接
-#             redis_conn = get_redis_connection('cart')
+#             redis_conn = get_redis_connection('carts')
 #             # 查询数据库获取数据
 #             sku_id_list = redis_conn.hkeys('cart_%s' % user.id)
 #             # 如果是全选

@@ -16,7 +16,7 @@ from users.serializer import UserAddressSerializer, AddressTitleSerializer, AddB
 
 class UserDetailView(RetrieveAPIView):
     """用户详情 -- 需登陆
-    GET /users/detail/
+    GET users/detail/
     """
 
     # 指定序列化器
@@ -45,7 +45,7 @@ class UserDetailView(RetrieveAPIView):
 
 class EmailView(UpdateAPIView):
     """修改用户邮箱（修改用户的邮箱字段）
-    PUT /users/email/
+    PUT users/email/
     """
 
     # 指定序列化器
@@ -62,7 +62,7 @@ class EmailView(UpdateAPIView):
 
 class AddressCount(GenericAPIView):
     """获取当前用户收货地址总数
-    GET /users/address/count/
+    GET users/address/count/
     """
     # 获取登陆用户
     permission_classes = [IsAuthenticated]
@@ -81,12 +81,12 @@ class AddressCount(GenericAPIView):
 
 class AddressViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, GenericViewSet):
     """用户地址管理视图集
-    POST    /addresses/             新建  -> create
-    PUT     /addresses/<pk>/        修改  -> update
-    GET     /addresses/             查询  -> list
-    DELETE  /addresses/<pk>/        删除  -> destroy
-    PUT     /addresses/<pk>/status/ 设置默认    -> status
-    PUT     /addresses/<pk>/title/  设置标题    -> title
+    POST    addresses/             新建  -> create
+    PUT     addresses/<pk>/        修改  -> update
+    GET     addresses/             查询  -> list
+    DELETE  addresses/<pk>/        删除  -> destroy
+    PUT     addresses/<pk>/status/ 设置默认    -> status
+    PUT     addresses/<pk>/title/  设置标题    -> title
     """
 
     # 序列化器

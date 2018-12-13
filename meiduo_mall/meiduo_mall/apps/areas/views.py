@@ -8,7 +8,7 @@ from areas.models import Area
 
 class AreaListView(APIView):
     """获取省市区管理列表
-    GET /area/list/
+    GET area/list/
     """
 
     # @cache_response(timeout=60 * 60, cache='default')

@@ -17,7 +17,7 @@
     </script>
 </head>
 <body>
-    <div id="app">
+<div id="app">
     <div class="header_con">
         <div class="header">
             <div class="welcome fl">欢迎来到美多商城!</div>
@@ -25,7 +25,7 @@
                 <div class="login_btn fl">
                     欢迎您：<em>{{ username }}</em>
                     <span>|</span>
-                    <a @click="logout">退出</a>
+                    <a href="#" @click="logout">退出</a>
                 </div>
                 <div class="user_link fl">
                     <span>|</span>
@@ -53,7 +53,16 @@
     <div class="common_list_con clearfix">
         <dl>
             <dt>寄送到：</dt>
-            <dd v-for='address in addresses' :class="[(nowsite==address.id)?'current':'']" @click="nowsite=address.id"><input type="radio" name="get_site" :value="address.id" v-model="nowsite">{{ address.province }} {{address.city}} {{ address.district }} {{ address.place }} （{{ address.receiver }} 收） {{ address.mobile }}</dd>
+            <!--优先显示收货地址置顶-->
+            <dd v-for='address in addresses' class="current" @click="nowsite=address.id" v-if="nowsite==address.id">
+                <input type="radio" name="get_site" :value="address.id" v-model="nowsite">
+                {{ address.province }} {{ address.city }} {{ address.district }} {{ address.place }} （{{ address.receiver }} 收） {{ address.mobile }}
+            </dd>
+            <!--普通收货地址-->
+            <dd v-for='address in addresses' class="" @click="nowsite=address.id" v-if="nowsite!=address.id">
+                <input type="radio" name="get_site" :value="address.id" v-model="nowsite">
+                {{ address.province }} {{ address.city }} {{ address.district }} {{ address.place }} （{{ address.receiver }} 收） {{ address.mobile }}
+            </dd>
         </dl>
         <a href="user_center_site.html" class="edit_site">编辑收货地址</a>
     </div>
@@ -78,7 +87,7 @@
             <li class="col05">小计</li>
         </ul>
         <ul class="goods_list_td clearfix" v-for="(sku,index) in skus">
-            <li class="col01">{{index+1}}</li>
+            <li class="col01">{{ index+1}}</li>
             <li class="col02"><img :src="sku.default_image_url"></li>
             <li class="col03">{{ sku.name }}</li>
             <li class="col05">{{ sku.price }}元</li>
@@ -98,7 +107,7 @@
     </div>
 
     <div class="order_submit clearfix">
-        <a @click="on_order_submit" id="order_btn">提交订单</a>
+        <a href="#" @click="on_order_submit" id="order_btn">提交订单</a>
     </div>
 
     <div class="footer">
@@ -112,17 +121,17 @@
             <a href="#">友情链接</a>
         </div>
         <p>CopyRight © 2016 北京美多商业股份有限公司 All Rights Reserved</p>
-        <p>电话：010-****888    京ICP备*******8号</p>
+        <p>电话：010-****888 京ICP备*******8号</p>
     </div>
+</div>
+
+<div class="popup_con">
+    <div class="popup">
+        <p>订单提交成功！</p>
     </div>
 
-    <div class="popup_con">
-        <div class="popup">
-            <p>订单提交成功！</p>
-        </div>
-
-        <div class="mask"></div>
-    </div>
-    <script type="text/javascript" src="/js/place_order.js"></script>
+    <div class="mask"></div>
+</div>
+<script type="text/javascript" src="/js/place_order.js"></script>
 </body>
 </html>

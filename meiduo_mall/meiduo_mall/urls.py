@@ -35,4 +35,6 @@ urlpatterns = [
     url(r"^contents/", include("contents.urls")),
     # 购物车
     url(r"^carts/", include("carts.urls")),
+    # 订单
+    url(r"^orders/", include("orders.urls")),
 ]

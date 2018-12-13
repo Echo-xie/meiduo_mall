@@ -69,6 +69,8 @@ INSTALLED_APPS = [
     "contents.apps.ContentsConfig",
     # 购物车
     "carts.apps.CartsConfig",
+    # 订单
+    "orders.apps.OrdersConfig",
 ]
 
 # 中间层列表
@@ -240,7 +242,7 @@ CACHES = {
         }
     },
     # 保存购物车商品
-    "cart": {
+    "carts": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": "redis://:123456@127.0.0.1:6379/3",
         "OPTIONS": {

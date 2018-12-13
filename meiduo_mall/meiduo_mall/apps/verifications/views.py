@@ -24,7 +24,7 @@ class SMSCodeView(APIView):
 
     def get(self, request, mobile):
         """get请求
-        GET /vm/sms_code/(?P<mobile>1[3-9]\d{9})/
+        GET vm/sms_code/(?P<mobile>1[3-9]\d{9})/
 
         :param request: 请求报文
         :param mobile: 手机
@@ -82,7 +82,7 @@ class CheckUsersAttr(GenericViewSet):
 
     def check_username(self, request, username):
         """判断用户名是否存在
-        GET /vm/username/(?P<username>\w{5,20})/count/
+        GET vm/username/(?P<username>\w{5,20})/count/
 
         :param request: 请求报文
         :param username: 用户名
@@ -102,7 +102,7 @@ class CheckUsersAttr(GenericViewSet):
 
     def check_mobile(self, request, mobile):
         """判断手机号码是否存在
-        GET /vm/mobile/(?P<mobile>1[3-9]\d{9})/count/
+        GET vm/mobile/(?P<mobile>1[3-9]\d{9})/count/
 
         :param request: 请求报文
         :param mobile: 手机号码
@@ -123,7 +123,7 @@ class CheckUsersAttr(GenericViewSet):
 
 class UserRegister(CreateAPIView):
     """用户注册
-    GET /vm/user_register/
+    GET vm/user_register/
     """
     # 指定序列化器
     serializer_class = UserRegisterSerializer
@@ -169,8 +169,8 @@ class VerifyEmailView(APIView):
 
 class PassWordViewSet(UpdateModelMixin, GenericViewSet):
     """用户密码管理视图集
-    GET /vm/password/<pk>/if_right/ -- 验证密码
-    PUT /vm/password/<pk>/ -- 修改密码
+    GET vm/password/<pk>/if_right/ -- 验证密码
+    PUT vm/password/<pk>/ -- 修改密码
 
     """
     # 序列化器

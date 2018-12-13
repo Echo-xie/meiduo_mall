@@ -13,34 +13,35 @@ var vm = new Vue({
         query: '',      // 查询关键字
         cart_total_count: 0, // 购物车总数量
         cart: [],       // 购物车数据
+        cart_goods_show: false,  // 购物车商品显示控制
     },
 
     computed: {
         // 总页数
-        total_page: function () {  
+        total_page: function () {
             return Math.ceil(this.count / this.page_size);
         },
 
         // 下一页
-        next: function () {         
+        next: function () {
             if (this.page >= this.total_page) {
                 return 0;
             } else {
                 return this.page + 1;
             }
         },
-        
+
         // 上一页
-        previous: function () { 
+        previous: function () {
             if (this.page <= 0) {
                 return 0;
             } else {
                 return this.page - 1;
             }
         },
-        
+
         // 页码
-        page_nums: function () {  
+        page_nums: function () {
             // 分页页数显示计算
             // 1.如果总页数<=5
             // 2.如果当前页是前3页
@@ -92,17 +93,17 @@ var vm = new Vue({
         // 请求查询结果
         get_search_result: function () {
             axios.get(this.common.host + 'goods/skus_search/', {
-                    params: {
-                        text: this.query,
-                        page: this.page,
-                        page_size: this.page_size,
-                    },
-                    responseType: 'json'
-                })
+                params: {
+                    text: this.query,
+                    page: this.page,
+                    page_size: this.page_size,
+                },
+                responseType: 'json'
+            })
                 .then(response => {
                     this.count = response.data.count;
                     this.skus = response.data.results;
-                    for(var i=0; i<this.skus.length; i++){
+                    for (var i = 0; i < this.skus.length; i++) {
                         this.skus[i].url = '/goods/' + this.skus[i].id + ".html";
                     }
                 })
@@ -121,6 +122,27 @@ var vm = new Vue({
 
         // 获取购物车数据
         get_cart: function () {
-        }
+            axios.get(this.common.host + 'carts/action/', this.common.config)
+                .then(response => {
+                    this.cart = response.data;
+                    if (this.cart.length <= 0) {
+                        this.cart_goods_show = false;
+                        return;
+                    }
+                    this.cart_goods_show = true;
+                    this.cart_total_count = 0;
+                    for (var i = 0; i < this.cart.length; i++) {
+                        if (this.cart[i].name.length > 25) {
+                            this.cart[i].name = this.cart[i].name.substring(0, 25) + '...';
+                        }
+                        this.cart_total_count += this.cart[i].count;
+                        this.cart[i].url = '/goods/' + this.cart[i].id + ".html";
+
+                    }
+                })
+                .catch(error => {
+                    console.log(error.response.data);
+                })
+        },
     }
 });

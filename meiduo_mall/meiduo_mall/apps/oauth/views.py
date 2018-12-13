@@ -16,7 +16,7 @@ from oauth.utils import generate_encrypted_openid
 
 class QQURLView(APIView):
     """提供QQ登录页面网址
-    GET /oauth/qq/authorization
+    GET oauth/qq/authorization
     """
 
     def get(self, request):
@@ -44,8 +44,8 @@ class QQURLView(APIView):
 
 class QQUserView(APIView):
     """用户扫码登录的回调处理
-    GET     /oauth/qq/user/
-    POST    /oauth/qq/user/
+    GET     oauth/qq/user/
+    POST    oauth/qq/user/
     """
 
     def get(self, request):
@@ -95,6 +95,8 @@ class QQUserView(APIView):
                 'user_id': user.id,
                 'username': user.username
             })
+            # 合并购物车
+            response = merge_cart_cookie_to_redis(request, response, user)
             return response
 
     def post(self, request):

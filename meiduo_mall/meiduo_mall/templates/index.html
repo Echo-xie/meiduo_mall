@@ -21,7 +21,7 @@
                 <div v-if="username" class="login_btn fl">
                     欢迎您：<em>[[ username ]]</em>
                     <span>|</span>
-                    <a @click="logout">退出</a>
+                    <a href="#" @click="logout">退出</a>
                 </div>
                 <div v-else class="login_btn fl">
                     <a href="login.html">登录</a>
@@ -56,10 +56,10 @@
         </div>
 
         <div @mouseenter="get_cart()" class="guest_cart fr">
-            <a href="#" class="cart_name fl">我的购物车</a>
+            <a href="cart.html" class="cart_name fl">我的购物车</a>
             <div class="goods_count fl" id="show_count">[[cart_total_count]]</div>
 
-            <ul class="cart_goods_show">
+            <ul class="cart_goods_show" v-show="cart_goods_show">
                 <li v-for="sku in cart">
                     <a :href="sku.url"><img :src="sku.default_image_url" alt="商品图片"></a>
                     <h4>[[sku.name]]</h4>
