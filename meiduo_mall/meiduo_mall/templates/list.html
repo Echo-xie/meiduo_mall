@@ -11,7 +11,7 @@
     <script type="text/javascript" src="js/axios-0.18.0.min.js"></script>
 </head>
 <body>
-<div id="app">
+<div id="app" v-cloak>
     <div class="header_con">
         <div class="header">
             <div class="welcome fl">欢迎来到美多商城!</div>
@@ -138,7 +138,7 @@
             </div>
         </div>
 
-        <div class="r_wrap fr clearfix">
+        <div class="r_wrap fr clearfix" v-if="skus.length != 0">
             <div class="sort_bar">
                 <a href="#" @click="on_sort('create_time')" :class="ordering=='create_time'||ordering=='-create_time'?'active':''">默认</a>
                 <a href="#" @click="on_sort('price')" :class="ordering=='price'||ordering=='-price'?'active':''">价格</a>
@@ -155,15 +155,15 @@
                     </div>
                 </li>
             </ul>
-            <!--<div v-if="skus.length==0"><p>暂时没有商品。</p></div>-->
 
             <div class="pagenation">
-                <a v-show="previous" @click="on_page(previous)">上一页</a>
-                <a v-for="num in page_nums" @click="on_page(num)" :class="num==page?'active':''">[[num]]</a>
-                <a v-show="next" @click="on_page(next)">下一页></a>
+                <a href="#" v-show="previous" @click="on_page(previous)">上一页</a>
+                <a href="#" v-for="num in page_nums" @click="on_page(num)" :class="num==page?'active':''">[[num]]</a>
+                <a href="#" v-show="next" @click="on_page(next)">下一页></a>
             </div>
 
         </div>
+        <div v-if="skus.length == 0"><p>暂时没有商品。</p></div>
     </div>
 
     <div class="footer">

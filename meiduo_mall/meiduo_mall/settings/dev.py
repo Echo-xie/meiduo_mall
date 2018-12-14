@@ -71,6 +71,8 @@ INSTALLED_APPS = [
     "carts.apps.CartsConfig",
     # 订单
     "orders.apps.OrdersConfig",
+    # 订单支付
+    "payment.apps.PaymentConfig",
 ]
 
 # 中间层列表

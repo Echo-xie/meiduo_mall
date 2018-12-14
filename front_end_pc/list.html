@@ -11,7 +11,7 @@
     <script type="text/javascript" src="js/axios-0.18.0.min.js"></script>
 </head>
 <body>
-<div id="app">
+<div id="app" v-cloak>
     <div class="header_con">
         <div class="header">
             <div class="welcome fl">欢迎来到美多商城!</div>
@@ -1687,7 +1687,7 @@
                 <a href="#" @click="on_sort('sales')" :class="ordering=='sales'||ordering=='-sales'?'active':''">人气</a>
             </div>
 
-            <ul class="goods_type_list clearfix">
+            <ul class="goods_type_list clearfix" v-if="skus.length != 0">
                 <li v-for="sku in skus">
                     <a :href="sku.url"><img :src="sku.default_image_url"></a>
                     <h4><a :href="sku.url">[[sku.name]]</a></h4>
@@ -1697,12 +1697,13 @@
                     </div>
                 </li>
             </ul>
-            <!--<div v-if="skus.length==0"><p>暂时没有商品。</p></div>-->
+            <div v-if="skus.length == 0"><p>暂时没有商品。</p></div>
+            <div><p>暂时没有商品。</p></div>
 
             <div class="pagenation">
-                <a v-show="previous" @click="on_page(previous)">上一页</a>
-                <a v-for="num in page_nums" @click="on_page(num)" :class="num==page?'active':''">[[num]]</a>
-                <a v-show="next" @click="on_page(next)">下一页></a>
+                <a href="#" v-show="previous" @click="on_page(previous)">上一页</a>
+                <a href="#" v-for="num in page_nums" @click="on_page(num)" :class="num==page?'active':''">[[num]]</a>
+                <a href="#" v-show="next" @click="on_page(next)">下一页></a>
             </div>
 
         </div>

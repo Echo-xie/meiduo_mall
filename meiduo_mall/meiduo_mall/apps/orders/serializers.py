@@ -6,14 +6,64 @@ from django.db import transaction
 from django.utils.timezone import now
 from django_redis import get_redis_connection
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
 
 from goods.models import SKU
+from goods.serializers import SKUSerializerBase
 from orders.models import OrderInfo, OrderGoods
 from orders.utils import get_orders_goods
 
 
-class CartSKUSerializer2(serializers.ModelSerializer):
+class OrderInfoSerializerBase(serializers.ModelSerializer):
+    """订单信息序列化器 -- 基类"""
+
+    class Meta:
+        """元数据"""
+
+        # 实体类
+        model = OrderInfo
+        # 字段
+        fields = "__all__"
+
+
+class OrderGoodsSerializerBase(serializers.ModelSerializer):
+    """订单商品序列化器 -- 基类"""
+
+    class Meta:
+        """元数据"""
+
+        # 实体类
+        model = OrderGoods
+        # 字段
+        fields = "__all__"
+
+
+class OrderGoodsSerializer(serializers.ModelSerializer):
+    """订单商品序列化器 -- 基类"""
+    sku = SKUSerializerBase()
+
+    class Meta:
+        """元数据"""
+
+        # 实体类
+        model = OrderGoods
+        # 字段
+        fields = "__all__"
+
+
+class OrderInfoSerializer(serializers.ModelSerializer):
+    """订单商品序列化器 -- 基类"""
+    ordergoods_set = OrderGoodsSerializer(many=True)
+
+    class Meta:
+        """元数据"""
+
+        # 实体类
+        model = OrderInfo
+        # 字段
+        fields = "__all__"
+
+
+class CartSKUSerializer(serializers.ModelSerializer):
     """购物车商品数据序列化器"""
 
     # 自定义字段
@@ -28,7 +78,7 @@ class CartSKUSerializer2(serializers.ModelSerializer):
         fields = ('id', 'name', 'default_image_url', 'price', 'count')
 
 
-class SaveOrderSerializer(ModelSerializer):
+class SaveOrderSerializer(serializers.ModelSerializer):
     """保存订单序列化器"""
 
     class Meta:
