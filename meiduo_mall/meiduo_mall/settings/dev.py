@@ -446,3 +446,8 @@ HAYSTACK_CONNECTIONS = {
 }
 # 信号处理, 定义更新规则 -- 当添加、修改、删除数据时, 自动更新索引
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+# 阿里支付配置
+ALIPAY_APPID = "2016092200570854"   # 需要修改成自己的沙箱应用的id(项目上线改成正式应用的id)
+ALIPAY_URL = "https://openapi.alipaydev.com/gateway.do"    # 测试环境
+# ALIPAY_URL = "https://openapi.alipay.com/gateway.do"     # 正式环境
+ALIPAY_DEBUG = True

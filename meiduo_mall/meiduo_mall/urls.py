@@ -38,5 +38,5 @@ urlpatterns = [
     # 订单
     url(r"^orders/", include("orders.urls")),
     # 订单支付
-    url(r"^payment/", include("orders.urls")),
+    url(r"^payment/", include("payment.urls")),
 ]

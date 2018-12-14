@@ -76,7 +76,7 @@
                     <td width="15%" v-if="order.pay_method == 2">支付宝</td>
                     <td width="15%" v-if="order.pay_method == 1">货到付款</td>
 
-                    <td width="15%" v-if="order.status == 1"><a href="#" class="oper_btn">去付款</a></td>
+                    <td width="15%" v-if="order.status == 1"><a href="#" class="oper_btn" @click="go_pay(order.order_id)">去付款</a></td>
                     <td width="15%" v-if="order.status == 2">未发货</td>
                     <td width="15%" v-if="order.status == 3">已发货</td>
                     <td width="15%" v-if="order.status == 4"><a href="#" class="oper_btn">评论</a></td>

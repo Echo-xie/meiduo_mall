@@ -71,9 +71,9 @@ var vm = new Vue({
                     .then(response => {
                         // 使用浏览器本地存储保存token
                         // 清空session级别存储
-                        // sessionStorage.clear();
+                        sessionStorage.clear();
                         // 清空本地级别存储
-                        // localStorage.clear();
+                        localStorage.clear();
                         // 如果记住登陆勾选
                         if (this.remember) {
                             // 记住登录

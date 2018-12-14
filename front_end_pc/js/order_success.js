@@ -11,8 +11,8 @@ var vm = new Vue({
     },
 
     computed: {
-        operate: function(){
-            if (this.pay_method==1){
+        operate: function () {
+            if (this.pay_method == 1) {
                 return '继续购物';
             } else {
                 return '去支付';
@@ -20,7 +20,7 @@ var vm = new Vue({
         }
     },
 
-    mounted: function(){
+    mounted: function () {
         this.order_id = this.get_query_string('order_id');
         this.amount = this.get_query_string('amount');
         this.pay_method = this.get_query_string('pay');
@@ -28,14 +28,14 @@ var vm = new Vue({
 
     methods: {
         // 退出
-        logout: function(){
+        logout: function () {
             sessionStorage.clear();
             localStorage.clear();
             location.href = '/login.html';
         },
 
         // 获取url路径参数
-        get_query_string: function(name){
+        get_query_string: function (name) {
             var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
             var r = window.location.search.substr(1).match(reg);
             if (r != null) {
@@ -44,12 +44,19 @@ var vm = new Vue({
             return null;
         },
 
-        next_operate: function(){
+        next_operate: function () {
             if (this.pay_method == 1) {
                 location.href = '/index.html';
             } else {
-                // 发起支付
-
+                // 发起支付 -- 获取阿里支付url
+                axios.get(this.common.host + 'payment/alipay/' + this.order_id + '/', this.common.config)
+                    .then(response => {
+                        // 跳转到支付宝支付
+                        location.href = response.data.alipay_url;
+                    })
+                    .catch(error => {
+                        console.log(error.response.data);
+                    })
             }
         }
     }

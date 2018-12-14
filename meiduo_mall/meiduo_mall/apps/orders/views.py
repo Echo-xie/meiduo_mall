@@ -66,9 +66,18 @@ class OrderAPIView(CreateAPIView, ListAPIView):
     # queryset = OrderInfo.objects.all()
 
     def get_queryset(self):
+        """查询集
+        订单信息的外键表--订单商品,
+        订单商品的主键表--sku,
+        都是通过序列化器进行转换, OrderInfoSerializer
+        """
+
+        # 订单信息创建时间排序
         order_info = OrderInfo.objects.order_by("create_time").all()
         # for order in order_info:
         #     order.goods = OrderGoodsSerializer(order.skus.all(), many=True).data
+
+        # 订单信息
         return order_info
 
     # def list(self, request, *args, **kwargs):

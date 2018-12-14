@@ -109,13 +109,27 @@ let vm = new Vue({
                 .catch(error => {
                     console.log(error.response.data);
                 })
-        }
+        },
+        // 点击页数
+        on_page: function (num) {
+            if (num != this.page) {
+                this.page = num;
+                this.get_skus();
+            }
+        },
+        // 去支付
+        go_pay: function (order_id) {
+            // 发起支付 -- 获取阿里支付url
+            axios.get(this.common.host + 'payment/alipay/' + order_id + '/', this.common.config)
+                .then(response => {
+                    // 跳转到支付宝支付
+                    location.href = response.data.alipay_url;
+                })
+                .catch(error => {
+                    console.log(error.response.data);
+                })
+        },
+
     },
-    // 点击页数
-    on_page: function (num) {
-        if (num != this.page) {
-            this.page = num;
-            this.get_skus();
-        }
-    },
+
 });
