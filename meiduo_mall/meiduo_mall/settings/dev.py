@@ -197,15 +197,8 @@ USE_TZ = True
 
 # 访问静态文件的URL前缀
 STATIC_URL = '/static/'
-
-# 存放查找静态文件的目录 -- 仅在调试模式下（DEBUG=True）能对外提供静态文件。
-STATICFILES_DIRS = [
-    # 根据当前目录路径拼接地址
-    os.path.join(BASE_DIR, 'static_files'),
-]
-# 上传文件保存路径
-MEDIA_ROOT = os.path.join(BASE_DIR, "static_files/media")
-
+# 静态文件收集保存目录
+STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'front_end_pc/static')
 # 缓存
 CACHES = {
     # 规则名称
