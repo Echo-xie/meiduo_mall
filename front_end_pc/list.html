@@ -1680,14 +1680,14 @@
             </div>
         </div>
 
-        <div class="r_wrap fr clearfix">
+        <div class="r_wrap fr clearfix" v-if="skus.length != 0">
             <div class="sort_bar">
                 <a href="#" @click="on_sort('create_time')" :class="ordering=='create_time'||ordering=='-create_time'?'active':''">默认</a>
                 <a href="#" @click="on_sort('price')" :class="ordering=='price'||ordering=='-price'?'active':''">价格</a>
                 <a href="#" @click="on_sort('sales')" :class="ordering=='sales'||ordering=='-sales'?'active':''">人气</a>
             </div>
 
-            <ul class="goods_type_list clearfix" v-if="skus.length != 0">
+            <ul class="goods_type_list clearfix">
                 <li v-for="sku in skus">
                     <a :href="sku.url"><img :src="sku.default_image_url"></a>
                     <h4><a :href="sku.url">[[sku.name]]</a></h4>
@@ -1697,8 +1697,6 @@
                     </div>
                 </li>
             </ul>
-            <div v-if="skus.length == 0"><p>暂时没有商品。</p></div>
-            <div><p>暂时没有商品。</p></div>
 
             <div class="pagenation">
                 <a href="#" v-show="previous" @click="on_page(previous)">上一页</a>
@@ -1707,6 +1705,7 @@
             </div>
 
         </div>
+        <div v-if="skus.length == 0"><p>暂时没有商品。</p></div>
     </div>
 
     <div class="footer">

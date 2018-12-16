@@ -13,12 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+import xadmin
 from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
     # admin站点
-    url(r'^admin/', admin.site.urls),
+    # url(r'^admin/', admin.site.urls),
+    # xadmin站点
+    url(r'xadmin/', include(xadmin.site.urls)),
     # CKEditor富文本路由
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
     # 用户子应用
